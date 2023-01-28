@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="SVGRoot"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs9">
+    <linearGradient
+       id="linearGradient407">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1"
+         offset="0"
+         id="stop403" />
+      <stop
+         style="stop-color:#ffff00;stop-opacity:1"
+         offset="1"
+         id="stop405" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient407"
+       id="linearGradient409"
+       x1="-57.930298"
+       y1="1083.8096"
+       x2="931.52515"
+       y2="74.348328"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     id="layer1">
+    <rect
+       style="fill:url(#linearGradient409);fill-opacity:1"
+       id="rect129"
+       width="903.09424"
+       height="897.21967"
+       x="60.452881"
+       y="63.390167"
+       rx="116.45596"
+       ry="109.32187" />
+    <rect
+       style="fill:#cccccc"
+       id="rect648"
+       width="568.11536"
+       height="334.19427"
+       x="178.85249"
+       y="300.15424"
+       rx="70"
+       ry="70" />
+    <rect
+       style="fill:#f2f2f2"
+       id="rect648-3"
+       width="568.11536"
+       height="334.19427"
+       x="222.67067"
+       y="339.60455"
+       rx="70"
+       ry="70" />
+    <rect
+       style="fill:#ffffff"
+       id="rect648-3-6"
+       width="568.11536"
+       height="334.19427"
+       x="282.5416"
+       y="388.5484"
+       rx="70"
+       ry="70" />
+  </g>
+</svg>

@@ -1,0 +1,21 @@
+[package]
+name    = "nvdialog-rs"
+version = "0.1.0-rc0"
+edition = "2018"
+
+repository  = "https://github.com/AndroGR/nvdialog-rs.git"
+description = "High-level Rust bindings for NvDialog"
+license     = "MIT"
+keywords    = [
+        "dialog",
+        "gui",
+        "ffi",
+        "bindings"
+]
+
+# strlen()
+[dependencies.libc]
+version = "0.2"
+
+[lib]
+doctest = false
