@@ -1,3 +1,8 @@
+## v0.1.0
+- Updated version to v0.1.0
+- Updated copyright
+- Made all strings more generic
+
 ## Initial Publish
 *This is not a changelog but a list of issues that have to be resolved*
 - File dialogs do not work properly: They either segfault or corrupt memory.
