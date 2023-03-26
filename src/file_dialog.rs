@@ -71,12 +71,12 @@ impl FileDialog {
         /// 
         /// let dialog = FileDialog::new(String::from("Open File"), FileDialogType::OpenFile);
         /// ```
-        pub fn new(title: String, type_of_dialog: &FileDialogType) -> Self {
+        pub fn new<S: AsRef<str>>(title: S, type_of_dialog: FileDialogType) -> Self {
                 match type_of_dialog {
                         FileDialogType::OpenFile => Self {
                                 raw: unsafe {
                                         nvd_open_file_dialog_new(
-                                                add_null_byte(title).as_ptr() as *const c_char,
+                                                add_null_byte(title.as_ref()).as_ptr() as *const c_char,
                                                 null()
                                         )
                                 },
@@ -85,7 +85,7 @@ impl FileDialog {
                         },
                         FileDialogType::SaveFile => Self {
                                 raw: unsafe { nvd_save_file_dialog_new(
-                                        add_null_byte(title).as_ptr() as *const c_char,
+                                        add_null_byte(title.as_ref()).as_ptr() as *const c_char,
                                         "Empty\0".as_ptr() as *const c_char,
                                 )},
                                 location_chosen: None

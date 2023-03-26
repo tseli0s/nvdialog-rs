@@ -107,17 +107,17 @@ pub enum Reply {
 
 impl QuestionDialog {
         /// Creates a new `QuestionDialog` and returns it with the parameters given.
-        pub fn new(title: String, msg: String, buttons: QuestionDialogButtons) -> Self {
+        pub fn new<S: AsRef<str>>(title: S, msg: S, buttons: QuestionDialogButtons) -> Self {
                 Self {
                         raw: unsafe {
                                 nvd_dialog_question_new(
-                                        add_null_byte(&title).as_ptr() as *mut c_char,
-                                        add_null_byte(&msg).as_ptr() as *mut c_char,
+                                        add_null_byte(title.as_ref()).as_ptr() as *mut c_char,
+                                        add_null_byte(msg.as_ref()).as_ptr() as *mut c_char,
                                         buttons as c_int
                                 )
                         },
-                        title,
-                        msg,
+                        title: String::from(title.as_ref()),
+                        msg: String::from(msg.as_ref()),
                         buttons
                 }
         }

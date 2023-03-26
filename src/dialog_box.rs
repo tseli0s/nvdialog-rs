@@ -59,15 +59,15 @@ pub struct DialogBox {
 impl DialogBox {
         /// Creates a new dialog box with the parameters `title` and `msg` given and
         /// returns it.
-        pub fn new(title: &str, msg: &str, dialog_type: DialogType) -> Self {
+        pub fn new<S: AsRef<str>>(title: S, msg: S, dialog_type: DialogType) -> Self {
                 let _type = match dialog_type {
                         DialogType::Simple => 0xff,
                         DialogType::Warning => 0xff + 1,
                         DialogType::Error => 0xff + 2,
                 };
 
-                let title = add_null_byte(title);
-                let msg = add_null_byte(msg);
+                let title = add_null_byte(title.as_ref());
+                let msg = add_null_byte(msg.as_ref());
 
                 Self {
                         raw: unsafe { nvd_dialog_box_new(
