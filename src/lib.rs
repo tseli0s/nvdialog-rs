@@ -26,6 +26,15 @@
 //! the [`nvdialog`](https://crates.io/crates/nvdialog) crate which provided system bindings to NvDialog
 //! using `libloading`.
 //! 
+//! # Safety
+//! The crate tries to imitate Rust's compile time checks with NvDialog, to ensure that safety is
+//! present within your code. This includes adding mutable references when an FFI call changes something
+//! instead of plain references (Which aren't checked anyways).
+//! 
+//! When it comes to threads, NvDialog's rules don't change here either: The dialogs must be created and used
+//! within the same thread. Creating dialogs from secondary threads is not supported officially.
+//! 
+//! 
 //! # Example dialog:
 //! ```rust
 //! /* Importing types */
