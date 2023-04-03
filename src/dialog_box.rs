@@ -82,7 +82,13 @@ impl DialogBox {
 
         /// Renders the dialog box to the screen.
         /// This function simply calls `nvd_show_dialog`.
+<<<<<<< HEAD
         pub fn show(&self) {
+=======
+        /// **NOTE**: `self` needs to be `mut` since some backends
+        /// mutate internal contents indirectly.
+        pub fn show(&mut self) {
+>>>>>>> d2916b4 (Fix `git` errors.)
                 unsafe { crate::nvd_show_dialog(self.raw); }
         }
 

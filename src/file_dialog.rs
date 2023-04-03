@@ -93,8 +93,16 @@ impl FileDialog {
                 }
         }
 
+<<<<<<< HEAD
         /// Returns the filename chosen from the file dialog.
         pub fn retrieve_filename(&self) -> String {
+=======
+        /// Returns the filename chosen from the file dialog. \
+        /// `self` is marked as `mut` since NvDialog does change
+        /// some parts of the actual native struct when calling this
+        /// function.
+        pub fn retrieve_filename(&mut self) -> String {
+>>>>>>> d2916b4 (Fix `git` errors.)
                 let raw_buffer: *mut c_char = null_mut();
                 unsafe { nvd_get_file_location(self.raw, &raw_buffer as *const _ as *mut _); }
                 if raw_buffer.is_null() {

@@ -123,7 +123,11 @@ impl QuestionDialog {
         }
 
         /// Returns the user reply from the dialog given.
+<<<<<<< HEAD
         pub fn get_reply(&self) -> Reply {
+=======
+        pub fn get_reply(&mut self) -> Reply {
+>>>>>>> d2916b4 (Fix `git` errors.)
                 Reply::from(unsafe {
                         nvd_get_reply(self.raw)
                 })

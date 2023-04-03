@@ -7,6 +7,7 @@ repository  = "https://github.com/AndroGR/nvdialog-rs.git"
 description = "High-level Rust bindings for NvDialog"
 license     = "MIT"
 keywords    = [
+        "nvdialog",
         "dialog",
         "gui",
         "ffi",
@@ -19,3 +20,7 @@ version = "0.2"
 
 [lib]
 doctest = false
+
+[features]
+default = []
+secproc = []

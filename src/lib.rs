@@ -63,6 +63,14 @@
 mod dialog_box;
 mod question_dialog;
 mod file_dialog;
+<<<<<<< HEAD
+=======
+mod notification;
+
+use libc::fork;
+
+pub use notification::*;
+>>>>>>> d2916b4 (Fix `git` errors.)
 pub use dialog_box::*;
 pub use question_dialog::*;
 pub use file_dialog::*;
@@ -76,6 +84,20 @@ pub(crate) struct NvdQuestionBox;
 #[repr(C)]
 pub(crate) struct NvdFileDialog;
 
+<<<<<<< HEAD
+=======
+#[repr(C)]
+pub(crate) struct NvdNotification;
+
+#[repr(C)]
+#[allow(non_camel_case_types)]
+pub(crate) enum NvdNotifyType {
+    NVD_NOTIFICATION_SIMPLE = 0,
+    NVD_NOTIFICATION_WARNING = 1,
+    NVD_NOTIFICATION_ERROR = 2
+}
+
+>>>>>>> d2916b4 (Fix `git` errors.)
 #[link(name = "nvdialog")]
 extern "C" {
         pub(crate) fn nvd_init(argv0: *const c_char) -> i32;
@@ -91,6 +113,14 @@ extern "C" {
         pub(crate) fn nvd_open_file_dialog_new(title: *const c_char, file_extensions: *const c_char) -> *mut NvdFileDialog;
         pub(crate) fn nvd_get_file_location(file_dialog: *mut NvdFileDialog, savebuf: *const *const c_char);
         pub(crate) fn nvd_save_file_dialog_new(title: *const c_char, default_filename: *const c_char) -> *mut NvdFileDialog;
+<<<<<<< HEAD
+=======
+
+        pub(crate) fn nvd_notification_new(title: *const c_char, msg: *const c_char, kind: NvdNotifyType) -> *mut NvdNotification;
+        pub(crate) fn nvd_send_notification(notification: *mut NvdNotification);
+        pub(crate) fn nvd_delete_notification(notification: *mut NvdNotification);
+        pub(crate) fn nvd_add_notification_action(notification: *mut NvdNotification, action: *const c_char, value_to_set: *mut c_int, value_to_return: *mut *mut c_int);
+>>>>>>> d2916b4 (Fix `git` errors.)
 }
 
 /// # Function to initialize NvDialog.
@@ -109,11 +139,37 @@ extern "C" {
 /// }
 /// ```
 pub fn init(argv0: String) -> Result<(), i32> {
+<<<<<<< HEAD
     let argv0 = add_null_byte(argv0);
     unsafe { match nvd_init(argv0.as_ptr() as *const c_char) {
         0 => Ok(()),
         e => Err(e)
     }}
+=======
+    let mut pid = -1;
+    let mut result: Result<(), i32> = Ok(());
+    if cfg!(feature = "secproc") {
+        pid = unsafe { fork() };
+        if pid < 0 {
+            panic!("fork() failed!")
+        } else if pid == 0 {
+            let argv0 = add_null_byte(argv0);
+            unsafe { match nvd_init(argv0.as_ptr() as *const c_char) {
+                0 => result = Ok(()),
+                e => result = Err(e)
+            }};
+        }
+    } else {
+        let argv0 = add_null_byte(argv0);
+        unsafe {
+            match nvd_init(argv0.as_ptr() as *const c_char) {
+                0 => result = Ok(()),
+                e => result = Err(e)
+            }
+        };
+    }
+    result
+>>>>>>> d2916b4 (Fix `git` errors.)
 }
 
 pub(crate) fn add_null_byte<S>(s: S) -> String
