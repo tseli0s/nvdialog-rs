@@ -23,26 +23,29 @@
  */
 
 extern crate nvdialog_rs;
+use nvdialog_rs::DialogBox;
 use nvdialog_rs::DialogType;
 use nvdialog_rs::FileDialog;
 use nvdialog_rs::FileDialogType;
-use nvdialog_rs::DialogBox;
 
 fn main() {
-    let argv0 = {
-        let argv: Vec<String> = std::env::args().collect();
-        &argv.clone()[0]
-    };
-
-    nvdialog_rs::init(String::from(argv0)).expect("Can't initialize Rustland");
-    let file_dialog = FileDialog::new(
-        String::from("Choose file"),
-        FileDialogType::OpenFile
+    nvdialog_rs::init().expect("Can't initialize NvDialog");
+    let mut file_dialog = FileDialog::new(
+        String::from("Select an image"),
+        FileDialogType::OpenFile,
+        vec![
+            "png".to_owned(),
+            "jpg".to_owned(),
+            "jpeg".to_owned(),
+            "ico".to_owned(),
+            "webp".to_owned()
+        ]
     );
 
-    {
-        let file = file_dialog.retrieve_filename();
-        let dialog_box = DialogBox::new("File chosen", &file, DialogType::Simple);
-        dialog_box.show();
-    }
+    //if let Some(file) = file_dialog.retrieve_filename() {
+    //    let mut dialog_box = DialogBox::new("File chosen", &file.to_str().unwrap(), DialogType::Simple).expect("Can't create dialog");
+    //    dialog_box.show();
+    //} else {
+    //    eprintln!("No file chosen!");
+    //}
 }

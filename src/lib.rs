@@ -25,23 +25,27 @@
 //! This crate offers high level, low overhead bindings to NvDialog for Rust. It's the successor of
 //! the [`nvdialog`](https://crates.io/crates/nvdialog) crate which provided system bindings to NvDialog
 //! using `libloading`.
-//! 
+//!
 //! # Safety
 //! The crate tries to imitate Rust's compile time checks with NvDialog, to ensure that safety is
 //! present within your code. This includes adding mutable references when an FFI call changes something
 //! instead of plain references (Which aren't checked anyways).
-//! 
+//!
 //! When it comes to threads, NvDialog's rules don't change here either: The dialogs must be created and used
-//! within the same thread. Creating dialogs from secondary threads is not supported officially.
-//! 
-//! 
+//! within the same thread. Creating dialogs from secondary threads is not supported officially, but may work
+//! on some platforms. In general:
+//! - Windows does allow it to some extend, but it's unsafe and not recommended.
+//! - macOS does not allow any UI operations outside the main thread.
+//! - Gtk on Linux does not support it directly, but GLib offers ways to safely send data between threads.
+//!
+//!
 //! # Example dialog:
 //! ```rust
 //! /* Importing types */
 //! extern crate nvdialog_rs;
 //! use nvdialog_rs::DialogBox;
 //! use nvdialog_rs::DialogType;
-//! 
+//!
 //! /* Initialize the library. This corresponds to 'nvd_init' */
 //! nvdialog_rs::init(String::new());
 //!
@@ -61,21 +65,22 @@
 #![allow(dead_code, improper_ctypes)]
 
 mod dialog_box;
-mod question_dialog;
+mod error;
 mod file_dialog;
-<<<<<<< HEAD
-=======
 mod notification;
+mod question_dialog;
+mod util;
 
-use libc::fork;
-
-pub use notification::*;
->>>>>>> d2916b4 (Fix `git` errors.)
 pub use dialog_box::*;
-pub use question_dialog::*;
+pub use error::*;
 pub use file_dialog::*;
+pub use notification::*;
+pub use question_dialog::*;
 
-use std::ffi::{c_char, c_void, c_int};
+use std::{
+    ffi::{c_char, c_int, c_void},
+    ptr::null,
+};
 #[repr(C)]
 pub(crate) struct NvdDialogBox;
 #[repr(C)]
@@ -84,43 +89,82 @@ pub(crate) struct NvdQuestionBox;
 #[repr(C)]
 pub(crate) struct NvdFileDialog;
 
-<<<<<<< HEAD
-=======
 #[repr(C)]
 pub(crate) struct NvdNotification;
+
+#[repr(C)]
+#[allow(non_camel_case_types)]
+enum NvdError {
+    NVD_NO_ERROR = 0,
+    NVD_NO_DISPLAY = 0xff,
+    NVD_BACKEND_FAILURE,
+    NVD_INVALID_PARAM,
+    NVD_NOT_INITIALIZED,
+    NVD_BACKEND_INVALID,
+    NVD_FILE_INACCESSIBLE,
+    NVD_STRING_EMPTY,
+    NVD_OUT_OF_MEMORY,
+    NVD_INTERNAL_ERROR,
+    NVD_ALREADY_INITIALIZED,
+}
 
 #[repr(C)]
 #[allow(non_camel_case_types)]
 pub(crate) enum NvdNotifyType {
     NVD_NOTIFICATION_SIMPLE = 0,
     NVD_NOTIFICATION_WARNING = 1,
-    NVD_NOTIFICATION_ERROR = 2
+    NVD_NOTIFICATION_ERROR = 2,
 }
 
->>>>>>> d2916b4 (Fix `git` errors.)
 #[link(name = "nvdialog")]
 extern "C" {
-        pub(crate) fn nvd_init(argv0: *const c_char) -> i32;
-        
-        /* TODO: Convert _type to a proper C enum */
-        pub(crate) fn nvd_dialog_box_new(title: *const c_char, msg: *const c_char, _type: c_int) -> *mut NvdDialogBox;
-        pub(crate) fn nvd_show_dialog(dialog: *mut NvdDialogBox);
-        pub(crate) fn nvd_free_object(object: *mut c_void);
+    pub(crate) fn nvd_init(argv0: *const c_char) -> i32;
 
-        pub(crate) fn nvd_dialog_question_new(title: *const c_char, msg: *const c_char, button: c_int) -> *mut NvdQuestionBox;
-        pub(crate) fn nvd_get_reply(__box: *mut NvdQuestionBox) -> c_int;
+    /* TODO: Convert _type to a proper C enum */
+    pub(crate) fn nvd_dialog_box_new(
+        title: *const c_char,
+        msg: *const c_char,
+        _type: c_int,
+    ) -> *mut NvdDialogBox;
+    pub(crate) fn nvd_show_dialog(dialog: *mut NvdDialogBox);
+    pub(crate) fn nvd_free_object(object: *mut c_void);
 
-        pub(crate) fn nvd_open_file_dialog_new(title: *const c_char, file_extensions: *const c_char) -> *mut NvdFileDialog;
-        pub(crate) fn nvd_get_file_location(file_dialog: *mut NvdFileDialog, savebuf: *const *const c_char);
-        pub(crate) fn nvd_save_file_dialog_new(title: *const c_char, default_filename: *const c_char) -> *mut NvdFileDialog;
-<<<<<<< HEAD
-=======
+    pub(crate) fn nvd_dialog_question_new(
+        title: *const c_char,
+        msg: *const c_char,
+        button: c_int,
+    ) -> *mut NvdQuestionBox;
+    pub(crate) fn nvd_get_reply(__box: *mut NvdQuestionBox) -> c_int;
 
-        pub(crate) fn nvd_notification_new(title: *const c_char, msg: *const c_char, kind: NvdNotifyType) -> *mut NvdNotification;
-        pub(crate) fn nvd_send_notification(notification: *mut NvdNotification);
-        pub(crate) fn nvd_delete_notification(notification: *mut NvdNotification);
-        pub(crate) fn nvd_add_notification_action(notification: *mut NvdNotification, action: *const c_char, value_to_set: *mut c_int, value_to_return: *mut *mut c_int);
->>>>>>> d2916b4 (Fix `git` errors.)
+    pub(crate) fn nvd_open_file_dialog_new(
+        title: *const c_char,
+        file_extensions: *const c_char,
+    ) -> *mut NvdFileDialog;
+    pub(crate) fn nvd_get_file_location(
+        file_dialog: *mut NvdFileDialog,
+        savebuf: *const *const c_char,
+    );
+    pub(crate) fn nvd_save_file_dialog_new(
+        title: *const c_char,
+        default_filename: *const c_char,
+    ) -> *mut NvdFileDialog;
+
+    pub(crate) fn nvd_notification_new(
+        title: *const c_char,
+        msg: *const c_char,
+        kind: NvdNotifyType,
+    ) -> *mut NvdNotification;
+    pub(crate) fn nvd_send_notification(notification: *mut NvdNotification);
+    pub(crate) fn nvd_delete_notification(notification: *mut NvdNotification);
+    pub(crate) fn nvd_add_notification_action(
+        notification: *mut NvdNotification,
+        action: *const c_char,
+        value_to_set: c_int,
+        value_to_return: *mut c_int,
+    );
+
+    pub(crate) fn nvd_set_error(error: NvdError);
+    pub(crate) fn nvd_get_error() -> NvdError;
 }
 
 /// # Function to initialize NvDialog.
@@ -134,47 +178,19 @@ extern "C" {
 /// # Examples:
 /// ```rust
 /// fn main() {
-///     nvdialog_rs::init(String::new())
+///     nvdialog_rs::init()
 ///         .expect("failed to initialize NvDialog");
 /// }
 /// ```
-pub fn init(argv0: String) -> Result<(), i32> {
-<<<<<<< HEAD
-    let argv0 = add_null_byte(argv0);
-    unsafe { match nvd_init(argv0.as_ptr() as *const c_char) {
-        0 => Ok(()),
-        e => Err(e)
-    }}
-=======
-    let mut pid = -1;
-    let mut result: Result<(), i32> = Ok(());
-    if cfg!(feature = "secproc") {
-        pid = unsafe { fork() };
-        if pid < 0 {
-            panic!("fork() failed!")
-        } else if pid == 0 {
-            let argv0 = add_null_byte(argv0);
-            unsafe { match nvd_init(argv0.as_ptr() as *const c_char) {
-                0 => result = Ok(()),
-                e => result = Err(e)
-            }};
-        }
-    } else {
-        let argv0 = add_null_byte(argv0);
-        unsafe {
-            match nvd_init(argv0.as_ptr() as *const c_char) {
-                0 => result = Ok(()),
-                e => result = Err(e)
-            }
-        };
-    }
-    result
->>>>>>> d2916b4 (Fix `git` errors.)
-}
+pub fn init() -> Result<(), i32> {
+    let result = unsafe {
+        // NvDialog will soon deprecate this parameter.
+        nvd_init(null())
+    };
 
-pub(crate) fn add_null_byte<S>(s: S) -> String
-where
-    S: AsRef<str> + std::fmt::Display
-{
-    format!("{}\0", s)
+    if result == 0 {
+        Ok(())
+    } else {
+        Err(result)
+    }
 }

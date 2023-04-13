@@ -22,85 +22,118 @@
  * IN THE SOFTWARE.
  */
 
-use std::ffi::{c_void, c_char};
+use std::ffi::{c_void, CString};
 
-use crate::{NvdDialogBox, nvd_dialog_box_new, add_null_byte};
+use crate::{nvd_dialog_box_new, nvd_get_error, Error, NvdDialogBox};
 
-/// # Specifies the type of the dialog box to be created
-/// This enum holds possible values for the type of the dialog
-/// that will be created:
-/// - `Simple` means the dialog box will not get any special decoration.
-/// - `Warning` means the dialog box will get more serious colors and a warning icon sometimes.
-/// - `Error` means the dialog box is intended to be used for an error, which means bright red
-/// colors and an error icon will be shown.
-/// # FFI Matches
-/// The members of this enum correspond to:\
-/// `Simple`  -> `NVD_DIALOG_SIMPLE` (0x04) \
-/// `Warning` -> `NVD_DIALOG_WARNING` \
-/// `Error`   -> `NVD_DIALOG_ERROR`
+/// An enumeration of the different types of dialogs that can be created.
+///
+/// This enum is used to specify the type of dialog to be created when calling
+/// the appropriate dialog creation functions. The different variants represent
+/// different types of dialogs that can be used to communicate with the user.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DialogType {
-        /// Simple dialog
-        Simple,
-        /// Warning dialog
-        Warning,
-        /// Error dialog
-        Error
+    /// A simple dialog box with no specific type.
+    Simple,
+    /// A warning dialog box, indicating that the user should be cautious or take
+    /// extra care when performing the action.
+    Warning,
+    /// An error dialog box, indicating that an error has occurred and the user should
+    /// take some action to resolve it.
+    Error,
 }
 
-/// # A Dialog Box
-/// This struct represents a single dialog box created by this crate.
-/// In order to create a new dialog box, see [`DialogBox::new`](crate::dialog_box::DialogBox::new).
+/// A struct representing a dialog box.
+///
+/// This struct provides a simple interface for creating and showing different types of dialog
+/// boxes, such as message boxes or question boxes. Once a dialog box is created using the
+/// `DialogBox::new` method, it can be shown to the user using the `DialogBox::show` method.
+///
+/// # Examples
+///
+/// Showing a simple dialog box:
+///
+/// ```
+/// use my_crate::{DialogBox, DialogType};
+///
+/// let mut dialog_box = DialogBox::new("My App", "Hello World", DialogType::Simple);
+/// dialog_box.show();
+/// ```
+///
+/// # Safety
+/// Showing the same dialog box more than once is **undefined behavior** and depending on
+/// the platform, may or may not raise an error.
+/// # FFI
+/// Corresponds to `NvdDialogBox`.
 pub struct DialogBox {
-        raw: *mut NvdDialogBox,
-        title: String,
-        msg: String
+    raw: *mut NvdDialogBox,
 }
 
 impl DialogBox {
-        /// Creates a new dialog box with the parameters `title` and `msg` given and
-        /// returns it.
-        pub fn new<S: AsRef<str>>(title: S, msg: S, dialog_type: DialogType) -> Self {
-                let _type = match dialog_type {
-                        DialogType::Simple => 0xff,
-                        DialogType::Warning => 0xff + 1,
-                        DialogType::Error => 0xff + 2,
-                };
+    /// Creates a new instance of `DialogBox` with the given `title`, `msg` and `dialog_type`.
+    ///
+    /// # Arguments
+    ///
+    /// * `title` - The title of the dialog box.
+    ///
+    /// * `msg` - The message to display in the dialog box.
+    ///
+    /// * `dialog_type` - The type of dialog box to display, either `Simple`, `Warning` or `Error`.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(DialogBox)` if the dialog box was successfully created, otherwise
+    /// returns `Err(Error)` with the error converted from NvDialog's error code.
+    ///
+    /// # Panics
+    /// This function will panic if `CString::new` fails to convert the given `title` or `msg`
+    /// to a null-terminated byte string.
+    pub fn new<S: AsRef<str>>(title: S, msg: S, dialog_type: DialogType) -> Result<Self, Error> {
+        let _type = match dialog_type {
+            DialogType::Simple => 0xff,
+            DialogType::Warning => 0xff + 1,
+            DialogType::Error => 0xff + 2,
+        };
 
-                let title = add_null_byte(title.as_ref());
-                let msg = add_null_byte(msg.as_ref());
+        let title = CString::new(title.as_ref()).expect("CString::new error");
+        let msg = CString::new(msg.as_ref()).expect("CString::new error");
 
-                Self {
-                        raw: unsafe { nvd_dialog_box_new(
-                                title.as_ptr() as *mut c_char,
-                                msg.as_ptr() as *mut c_char,
-                                _type
-                        ) },
-                        title: String::from(title),
-                        msg: String::from(msg)
-                }
+        let raw = unsafe {
+            let raw = nvd_dialog_box_new(title.as_ptr(), msg.as_ptr(), _type);
+            if raw.is_null() {
+                return Err(Error::from(nvd_get_error() as i32));
+            }
+            raw
+        };
+
+        Ok(Self { raw })
+    }
+
+    /// Displays the dialog box on the screen.
+    ///
+    /// This function shows the dialog box on the screen, allowing the user to interact with it.
+    /// It should be called after setting any necessary options and buttons on the dialog.
+    /// This function is unsafe, because it uses FFI to call C code that might not be safe.
+    pub fn show(&mut self) {
+        unsafe {
+            crate::nvd_show_dialog(self.raw);
         }
+    }
 
-        /// Renders the dialog box to the screen.
-        /// This function simply calls `nvd_show_dialog`.
-<<<<<<< HEAD
-        pub fn show(&self) {
-=======
-        /// **NOTE**: `self` needs to be `mut` since some backends
-        /// mutate internal contents indirectly.
-        pub fn show(&mut self) {
->>>>>>> d2916b4 (Fix `git` errors.)
-                unsafe { crate::nvd_show_dialog(self.raw); }
-        }
-
-        /// Returns the raw pointer to the dialog box created
-        /// from NvDialog directly.
-        fn get_raw(&self) -> *mut NvdDialogBox {
-                self.raw
-        }
+    /// Returns the raw pointer to the dialog box created
+    /// from NvDialog directly.
+    ///
+    /// Marked as `unsafe` because accessing the internal struct is not officially
+    /// supported by NvDialog and may cause race conditions.
+    unsafe fn get_raw(&mut self) -> *mut NvdDialogBox {
+        self.raw
+    }
 }
 
 impl Drop for DialogBox {
-        fn drop(&mut self) {
-            unsafe { crate::nvd_free_object(self.raw as *mut c_void); }
+    fn drop(&mut self) {
+        unsafe {
+            crate::nvd_free_object(self.raw as *mut c_void);
         }
+    }
 }

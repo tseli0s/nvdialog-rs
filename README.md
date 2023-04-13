@@ -8,6 +8,14 @@
 
 This crate offers Rust bindings to [NvDialog](https://github.com/AndroGR/nvdialog) and abstracts away the pointers and other nasty stuff in favor of Rust principles. This crate **will NOT build NvDialog manually**. You should have a build of NvDialog available in your system at runtime or package it with your application.
 
+# Features
+- High-level Rust bindings with increased safety around the C parts.
+- Native-dialogs using the OS's API.
+- File dialogs, Notifications, Dialog Boxes, and other dialogs supported by NvDialog.
+- Low-overhead.
+- Extremely easy to use.
+- Only one dependency!
+
 # NOTE:
 The [`nvdialog`](https://crates.io/crates/nvdialog) crate (Which I also created) has been deprecated and replaced by this crate, which is much more minimal and easy to use. If you have been using the former, immediately switch to this one.
 
@@ -34,17 +42,6 @@ fn main() {
         dialog_box.show();
 }
 ```
-
-# `rustc` support:
-Here is a table with supported versions of `rustc` (The Rust compiler).
-You can also use older versions however you may get error messages.
-| Version  | Crate Version | Supported |
-| ---      |    ---        | ---       |
-| 1.35.0>  |   0.1.0-rc1   |     ❗    |
-| 1.45.0>  |   0.1.0-rc1   |     ❗    |
-| 1.55.0>  |   0.1.0-rc1   |     ❗    |
-| current  |   0.1.0-rc1   |     ✅    |
-| nightly  |   0.1.0-rc1   |     ✅    |
 
 # License
 This library is licensed under the MIT License:

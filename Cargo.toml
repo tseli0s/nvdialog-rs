@@ -1,6 +1,6 @@
 [package]
 name    = "nvdialog-rs"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 repository  = "https://github.com/AndroGR/nvdialog-rs.git"
@@ -14,13 +14,11 @@ keywords    = [
         "bindings"
 ]
 
-# strlen()
-[dependencies.libc]
-version = "0.2"
+[dependencies]
+thiserror = "1.0.40"
 
 [lib]
 doctest = false
 
 [features]
 default = []
-secproc = []

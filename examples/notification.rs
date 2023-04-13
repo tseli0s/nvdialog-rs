@@ -22,17 +22,15 @@
  * IN THE SOFTWARE.
  */
 
-use nvdialog_rs::DialogBox;
-use nvdialog_rs::DialogType;
+use nvdialog_rs::{Notification, NotificationKind};
 
 fn main() {
-    nvdialog_rs::init().expect("Can't initialize NvDialog!");
-
-    let mut dialog_box = DialogBox::new(
-        "Hello World (from Rust!)",
-        "A very basic dialog box from Rust.",
-        DialogType::Simple,
+    nvdialog_rs::init().expect("Failed to initialize NvDialog!");
+    let mut notification = Notification::new(
+        "Notification from Rust!",
+        "Here's a notification using nvdialog-rs!",
+        NotificationKind::Simple,
     )
-    .expect("Error");
-    dialog_box.show()
+    .expect("Unable to construct notification");
+    notification.send();
 }
