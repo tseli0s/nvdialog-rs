@@ -33,13 +33,13 @@ fn main() {
     let mut file_dialog = FileDialog::new(
         String::from("Select an image"),
         FileDialogType::OpenFile,
-        vec![
+        Some(vec![
             "png".to_owned(),
             "jpg".to_owned(),
             "jpeg".to_owned(),
             "ico".to_owned(),
             "webp".to_owned()
-        ]
+        ])
     );
 
     if let Some(file) = file_dialog.retrieve_filename() {
