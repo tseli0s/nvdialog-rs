@@ -29,7 +29,7 @@ use crate::{
 use std::{
     ffi::{c_char, CStr},
     path::PathBuf,
-    ptr::null_mut,
+    ptr::{null_mut, null},
 };
 
 /// # Mode of the file dialog
@@ -118,20 +118,26 @@ impl FileDialog {
     /// ```
     /// let file_dialog = FileDialog::new("Save File", FileDialogType::SaveFile);
     /// ```
-    pub fn new<S: AsRef<str>>(title: S, type_of_dialog: FileDialogType, file_extensions: impl IntoIterator<Item = S>) -> Self {
+    pub fn new<S: AsRef<str>>(title: S, type_of_dialog: FileDialogType, file_extensions: Option<impl IntoIterator<Item = S>>) -> Self {
         /* Just converting this into a format NvDialog will understand */
         let mut extensions = String::new();
-        for extension in file_extensions {
-            extensions += extension.as_ref();
-            extensions += ";";
-            extensions += "\0";
+        if file_extensions.is_some() {
+            for extension in file_extensions.unwrap() {
+                extensions += extension.as_ref();
+                extensions += ";";
+                extensions += "\0";
+            }
         }
         match type_of_dialog {
             FileDialogType::OpenFile => Self {
                 raw: unsafe {
                     nvd_open_file_dialog_new(
                         c_string!(title.as_ref()),
-                        extensions.as_ptr() as *const c_char
+                        if extensions.is_empty() {
+                            null_mut()
+                        } else {
+                            extensions.as_ptr() as *const c_char
+                        }
                     )
                 },
                 location_chosen: None,
