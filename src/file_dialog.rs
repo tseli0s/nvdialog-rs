@@ -29,7 +29,7 @@ use crate::{
 use std::{
     ffi::{c_char, CStr},
     path::PathBuf,
-    ptr::{null, null_mut},
+    ptr::null_mut,
 };
 
 /// # Mode of the file dialog
@@ -128,7 +128,12 @@ impl FileDialog {
         }
         match type_of_dialog {
             FileDialogType::OpenFile => Self {
-                raw: unsafe { nvd_open_file_dialog_new(c_string!(title.as_ref()), c_string!(extensions)) },
+                raw: unsafe {
+                    nvd_open_file_dialog_new(
+                        c_string!(title.as_ref()),
+                        extensions.as_ptr() as *const c_char
+                    )
+                },
                 location_chosen: None,
             },
             FileDialogType::SaveFile => Self {
