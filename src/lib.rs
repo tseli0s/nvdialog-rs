@@ -165,24 +165,55 @@ extern "C" {
 
     pub(crate) fn nvd_set_error(error: NvdError);
     pub(crate) fn nvd_get_error() -> NvdError;
+    pub(crate) fn nvd_set_application_name(application_name: *const c_char);
+    pub(crate) fn nvd_get_application_name() -> *const c_char;
 }
 
-/// # Function to initialize NvDialog.
-/// This function initializes NvDialog and its associated backends.
-/// You should call this function somewhere in the top of your program,
-/// as this function is expensive and is required to be called before any other
-/// function of this crate.
+/// Initialize NvDialog in the current thread.
+/// 
+/// This function initializes NvDialog and its associated backends, and should be called at the
+/// top of your program. Note that this function is required to be called in order to show dialogs.
+/// Not calling this function before using most of NvDialog's available API is **undefined behavior**.
+///
 /// # Returns
-/// On success (0 returned from `nvd_init`), `Ok(())` is returned. Otherwise, an `Err` with the error
-/// code returned from NvDialog is returned.
-/// # Examples:
-/// ```rust
+/// If the initialization is successful (i.e., `nvd_init` returns 0), then this function returns
+/// `Ok(())`. Otherwise, an [`Error`] is returned built from the error that NvDialog returned.
+///
+/// # Examples
+/// Basic usage:
+///
+/// ```
 /// fn main() {
-///     nvdialog_rs::init()
-///         .expect("failed to initialize NvDialog");
+///     nvdialog_rs::init().expect("Failed to initialize NvDialog");
+///     // the rest of your application...
 /// }
 /// ```
-pub fn init() -> Result<(), i32> {
+/// 
+/// Initializing from a second thread:
+/// 
+/// ```
+/// use std::thread;
+/// fn main() {
+///     println!("Main thread!");
+///     thread::spawn(move ||{
+///         nvdialog_rs::init().expect("Init error");
+///         // Use `nvdialog_rs` only within this thread now!
+///     })
+/// }
+/// ```
+/// The `init` function is intended to be called once at the beginning of your program. Calling it
+/// again after it has already been called succesfully is going to return [`Error::AlreadyInitialized`].
+/// 
+/// # Multithreading
+/// For projects that wish to use multiple threads with NvDialog, you must make **ALL** calls in the second
+/// thread. That is, do not call this function on your main thread and other functions in the secondary thread,
+/// as that produces undefined behavior on some platforms. The CI on the [**NvDialog Repo**](https://github.com/tseli0s/nvdialog)
+/// runs a multithreading test on most desktop platforms with that exact undefined behavior to monitor the runtime
+/// behavior.
+/// 
+/// # FFI
+/// Corresponds to `nvd_init`.
+pub fn init() -> Result<(), Error> {
     let result = unsafe {
         // NvDialog will soon deprecate this parameter.
         nvd_init(null())
@@ -191,6 +222,19 @@ pub fn init() -> Result<(), i32> {
     if result == 0 {
         Ok(())
     } else {
-        Err(result)
+        Err(Error::from(result))
+    }
+}
+
+/// Sets the application name for NvDialog.
+/// 
+/// This function sets the application name for NvDialog, often used in notifications
+/// and system configuration (eg. DBus). By default, the name is set to `NvDialog Application`
+/// since empty strings may cause issues.
+/// **NOTICE:** Do not confuse this function with your program's executable name! That used to be
+/// handled by [`crate::init`] but has been deprecated entirely!
+pub fn set_app_name<S: AsRef<str>>(name: S) {
+    unsafe {
+        nvd_set_application_name(c_string!(name.as_ref()));
     }
 }
