@@ -1,0 +1,3 @@
+[submodule "nvdialog-sys/nvdialog"]
+	path = nvdialog-sys/nvdialog
+	url = https://github.com/tseli0s/nvdialog.git
