@@ -30,16 +30,14 @@ fn main() {
         nvdialog_rs::init();
 
         /* Creating the dialog box. */
-        let dialog_box = DialogBox::new(
+        DialogBox::new(
                 "Hello from Rust!", /* Title of the dialog */
                 /* Message of the dialog */
                 "This dialog has been created using Rust and NvDialog bindings to the language.",
                 /* See documentation for more */
                 DialogType::Simple
-        );
-
-        /* Showing the dialog box. */
-        dialog_box.show();
+        ).expect("Couldn't create dialog");
+         .show();
 }
 ```
 
@@ -47,7 +45,7 @@ fn main() {
 This library is licensed under the MIT License:
 ```
 The MIT License (MIT)
-Copyright © 2022 Aggelos Tselios and contributors on NvDialog.
+Copyright © 2022-2023 Aggelos Tselios
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
