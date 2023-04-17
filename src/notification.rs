@@ -112,13 +112,10 @@ impl Notification {
     /// Note that calling `send` multiple times will result in multiple notifications being shown:
     ///
     /// ```
-    /// # use nvdialog_rs::{Notification, NotificationKind};
-    /// # let mut notification = Notification::new("Title", "Body", NotificationKind::Simple)
-    /// #     .expect("Failed to create notification");
+    /// use nvdialog_rs::{Notification, NotificationKind};
+    /// let mut notification = Notification::new("Title", "Body", NotificationKind::Simple)
+    ///     .expect("Failed to create notification");
     /// // Send the notification
-    /// notification.send();
-    ///
-    /// // Calling `send` totally works!
     /// notification.send();
     /// ```
     ///
