@@ -29,7 +29,7 @@ use crate::{
 use std::{
     ffi::{c_char, CStr},
     path::PathBuf,
-    ptr::{null_mut, null},
+    ptr::null_mut,
 };
 
 /// # Mode of the file dialog
@@ -89,7 +89,9 @@ pub struct FileDialog {
 
 impl FileDialog {
     /// Creates a new `FileDialog` instance with the specified title and
-    /// type of dialog. This function returns a new `FileDialog` instance
+    /// type of dialog.
+    /// 
+    /// This function returns a new `FileDialog` instance
     /// with a raw pointer to the underlying `NvdFileDialog` struct
     /// initialized based on the specified type of dialog. The title
     /// argument specifies the title to be displayed in the file dialog
