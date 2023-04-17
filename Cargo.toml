@@ -1,3 +1,8 @@
+[workspace]
+members = [
+        "nvdialog-sys"
+]
+
 [package]
 name    = "nvdialog-rs"
 version = "0.2.0"
@@ -15,7 +20,8 @@ keywords    = [
 ]
 
 [dependencies]
-thiserror = "1.0.40"
+thiserror    = "1.0.40"
+nvdialog-sys = { path = "nvdialog-sys", version = "*" }
 
 [lib]
 doctest = false
