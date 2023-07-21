@@ -127,7 +127,7 @@ extern "C" {
         _type: c_int,
     ) -> *mut NvdDialogBox;
     pub(crate) fn nvd_show_dialog(dialog: *mut NvdDialogBox);
-    pub(crate) fn nvd_dialog_box_set_accept_label(dialog: *mut NvdDialogBox, label: *const c_char);
+    pub(crate) fn nvd_dialog_box_set_accept_text(dialog: *mut NvdDialogBox, label: *const c_char);
     pub(crate) fn nvd_free_object(object: *mut c_void);
 
     pub(crate) fn nvd_dialog_question_new(

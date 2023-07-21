@@ -112,7 +112,7 @@ impl DialogBox {
     pub fn set_accept_label<S: AsRef<str>>(&mut self, label: S) {
         let label = CString::new(label.as_ref()).expect("CString::new error");
         unsafe {
-            crate::nvd_dialog_box_set_accept_label(self.raw, label.as_ptr());
+            crate::nvd_dialog_box_set_accept_text(self.raw, label.as_ptr());
         }
     }
 
