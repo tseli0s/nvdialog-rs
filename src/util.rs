@@ -23,13 +23,12 @@
  */
 
 #![macro_use]
+#![allow(temporary_cstring_as_ptr)]
 
 #[macro_export]
 macro_rules! c_string {
     ($rstr:expr) => {
-        std::ffi::CString::new($rstr)
-            .expect("CString::new error")
-            .as_ptr()
+        std::ffi::CString::new($rstr).expect("CString::new error")
     };
 }
 

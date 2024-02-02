@@ -30,7 +30,14 @@ fn main() {
         .define("NVD_BUILD_STATIC", "OFF")
         .define("NVDIALOG_MAXBUF", "256")
         .define("NVD_USE_GTK4", "OFF")
-        .define("CMAKE_BUILD_TYPE", if cfg!(debug_assertions) { "Debug"} else { "Release" })
+        .define(
+            "CMAKE_BUILD_TYPE",
+            if cfg!(debug_assertions) {
+                "Debug"
+            } else {
+                "Release"
+            },
+        )
         .build();
 
     #[cfg(target_os = "linux")]
@@ -40,17 +47,17 @@ fn main() {
                 println!("Found Gtk3, version {}.", library.version);
                 println!("Link paths: {:?}", library.link_paths);
                 println!("Link libraries: {:?}", library.libs);
-    
+
                 for path in library.link_paths {
                     println!("cargo:rustc-link-search=native={}", path.display());
                 }
                 for lib in library.libs {
                     println!("cargo:rustc-link-lib={}", lib);
                 }
-            },
+            }
             Err(_) => {
                 panic!("You need Gtk3 on Linux to use NvDialog.")
-            },
+            }
         }
     }
 

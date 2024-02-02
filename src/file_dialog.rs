@@ -22,10 +22,8 @@
  * IN THE SOFTWARE.
  */
 
-use crate::{
-    c_string, nvd_get_file_location, nvd_open_file_dialog_new, nvd_save_file_dialog_new,
-    NvdFileDialog,
-};
+use crate::c_string;
+use nvdialog_sys::ffi::*;
 use std::{
     ffi::{c_char, CStr},
     path::PathBuf,
@@ -90,7 +88,7 @@ pub struct FileDialog {
 impl FileDialog {
     /// Creates a new `FileDialog` instance with the specified title and
     /// type of dialog.
-    /// 
+    ///
     /// This function returns a new `FileDialog` instance
     /// with a raw pointer to the underlying `NvdFileDialog` struct
     /// initialized based on the specified type of dialog. The title
@@ -120,7 +118,11 @@ impl FileDialog {
     /// ```
     /// let file_dialog = FileDialog::new("Save File", FileDialogType::SaveFile);
     /// ```
-    pub fn new<S: AsRef<str>>(title: S, type_of_dialog: FileDialogType, file_extensions: Option<impl IntoIterator<Item = S>>) -> Self {
+    pub fn new<S: AsRef<str>>(
+        title: S,
+        type_of_dialog: FileDialogType,
+        file_extensions: Option<impl IntoIterator<Item = S>>,
+    ) -> Self {
         /* Just converting this into a format NvDialog will understand */
         let mut extensions = String::new();
         if file_extensions.is_some() {
@@ -131,25 +133,34 @@ impl FileDialog {
             }
         }
         match type_of_dialog {
-            FileDialogType::OpenFile => Self {
+            FileDialogType::OpenFile => {
+                let t = c_string!(title.as_ref());
+                Self {
                 raw: unsafe {
                     nvd_open_file_dialog_new(
-                        c_string!(title.as_ref()),
+                        t.as_ptr(),
                         if extensions.is_empty() {
                             null_mut()
                         } else {
                             extensions.as_ptr() as *const c_char
-                        }
+                        },
                     )
                 },
                 location_chosen: None,
-            },
-            FileDialogType::SaveFile => Self {
-                raw: unsafe {
-                    nvd_save_file_dialog_new(c_string!(title.as_ref()), c_string!("filename"))
-                },
-                location_chosen: None,
-            },
+            }},
+            FileDialogType::SaveFile => {
+                let t = c_string!(title.as_ref());
+                let f = c_string!("filename");
+                Self {
+                    raw: unsafe {
+                        nvd_save_file_dialog_new(
+                            t.as_ptr(),
+                            f.as_ptr()
+                        )
+                    },
+                    location_chosen: None,
+                }
+            }
         }
     }
 

@@ -22,8 +22,9 @@
  * IN THE SOFTWARE.
  */
 
-use crate::{c_string, nvd_dialog_question_new, nvd_get_reply, NvdQuestionBox};
-use std::ffi::{c_int, c_void};
+use crate::c_string;
+use nvdialog_sys::ffi::*;
+use std::ffi::{c_uint, c_void};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// # Possible button combination for question dialogs.
@@ -106,7 +107,7 @@ pub struct QuestionDialog {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 /// An enum that holds all possible replies from a dialog.
-/// Can be converted from an `i32` if needed.
+/// Can be converted from a `u32` if needed.
 /// # Example
 /// ```rust
 /// extern crate nvdialog_rs;
@@ -158,14 +159,10 @@ impl QuestionDialog {
     /// ```
 
     pub fn new<S: AsRef<str>>(title: S, msg: S, buttons: QuestionDialogButtons) -> Self {
+        let t = c_string!(title.as_ref());
+        let q = c_string!(msg.as_ref());
         Self {
-            raw: unsafe {
-                nvd_dialog_question_new(
-                    c_string!(title.as_ref()),
-                    c_string!(msg.as_ref()),
-                    buttons as c_int,
-                )
-            },
+            raw: unsafe { nvd_dialog_question_new(t.as_ptr(), q.as_ptr(), buttons as c_uint) },
             title: String::from(title.as_ref()),
             msg: String::from(msg.as_ref()),
             buttons,
@@ -193,13 +190,13 @@ impl QuestionDialog {
     }
 }
 
-impl From<i32> for Reply {
-    fn from(value: i32) -> Self {
-        if value == Reply::Accepted as i32 {
-            Reply::Accepted
-        } else if value == Reply::Cancelled as i32 {
+impl From<u32> for Reply {
+    fn from(value: u32) -> Self {
+        if value == Reply::Accepted as u32 {
+            Reply::Accepted.into()
+        } else if value == Reply::Cancelled as u32 {
             Reply::Cancelled
-        } else if value == Reply::Rejected as i32 {
+        } else if value == Reply::Rejected as u32 {
             Reply::Rejected
         } else {
             Reply::Cancelled
@@ -210,7 +207,7 @@ impl From<i32> for Reply {
 impl Drop for QuestionDialog {
     fn drop(&mut self) {
         unsafe {
-            crate::nvd_free_object(self.raw as *mut c_void);
+            nvd_free_object(self.raw as *mut c_void);
         }
     }
 }

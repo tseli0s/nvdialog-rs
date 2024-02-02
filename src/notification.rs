@@ -22,11 +22,8 @@
  * IN THE SOFTWARE.
  */
 
-use crate::{c_string, nvd_send_notification};
-use crate::{
-    nvd_add_notification_action, nvd_delete_notification, nvd_notification_new, NvdNotification,
-    NvdNotifyType,
-};
+use crate::c_string;
+use nvdialog_sys::ffi::*;
 
 /// A notification dialog, which can be used to send a notification to the user.
 ///
@@ -41,10 +38,25 @@ pub struct Notification {
     raw: *mut NvdNotification,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum NotificationKind {
     Simple,
     Warning,
     Error,
+}
+
+impl Into<u32> for NotificationKind {
+    fn into(self) -> u32 {
+        if self == NotificationKind::Simple {
+            NotificationKind::Simple as u32
+        } else if self == NotificationKind::Warning {
+            NotificationKind::Warning as u32
+        } else if self == NotificationKind::Error {
+            NotificationKind::Error as u32
+        } else {
+            NotificationKind::Simple as u32
+        }
+    }
 }
 
 impl Notification {
@@ -71,18 +83,9 @@ impl Notification {
         msg: S,
         kind: NotificationKind,
     ) -> Result<Self, crate::Error> {
-        let kind = match kind {
-            NotificationKind::Simple => NvdNotifyType::NVD_NOTIFICATION_SIMPLE,
-            NotificationKind::Warning => NvdNotifyType::NVD_NOTIFICATION_WARNING,
-            NotificationKind::Error => NvdNotifyType::NVD_NOTIFICATION_ERROR,
-        };
-        let raw = unsafe {
-            nvd_notification_new(
-                c_string!(title.as_ref()),
-                c_string!(msg.as_ref()),
-                kind.into(),
-            )
-        };
+        let t = c_string!(title.as_ref());
+        let m = c_string!(msg.as_ref());
+        let raw = unsafe { nvd_notification_new(t.as_ptr(), m.as_ptr(), kind.into()) };
 
         if raw.is_null() {
             return Err(crate::Error::OutOfMemory);
@@ -91,7 +94,10 @@ impl Notification {
     }
 
     pub fn add_action<S: AsRef<str>>(&mut self, name: S, val: i32, ptr: &mut i32) {
-        unsafe { nvd_add_notification_action(self.raw, c_string!(name.as_ref()), val, ptr) }
+        let a = c_string!(name.as_ref());
+        unsafe {
+            nvd_add_notification_action(self.raw, a.as_ptr(), val, ptr);
+        }
     }
 
     /// Sends the notification to the desktop notification system. If the notification has

@@ -23,31 +23,19 @@
  */
 
 extern crate nvdialog_rs;
-use nvdialog_rs::DialogBox;
-use nvdialog_rs::DialogType;
-use nvdialog_rs::FileDialog;
-use nvdialog_rs::FileDialogType;
+use nvdialog_rs::QuestionDialog;
+use nvdialog_rs::QuestionDialogButtons;
 
 fn main() {
     nvdialog_rs::init().expect("Can't initialize NvDialog");
-    let mut file_dialog = FileDialog::new(
-        String::from("Select an image"),
-        FileDialogType::OpenFile,
-        Some(vec![
-            "png".to_owned(),
-            "jpg".to_owned(),
-            "jpeg".to_owned(),
-            "ico".to_owned(),
-            "webp".to_owned(),
-        ]),
+    let mut dialog = QuestionDialog::new(
+        "Which message should be shown?",
+        "Select between Yes/No/Cancel please.",
+        QuestionDialogButtons::YesNoCancel,
     );
-
-    if let Some(file) = file_dialog.retrieve_filename() {
-        let mut dialog_box =
-            DialogBox::new("File chosen", &file.to_str().unwrap(), DialogType::Simple)
-                .expect("Can't create dialog");
-        dialog_box.show();
-    } else {
-        eprintln!("No file chosen!");
+    match dialog.get_reply() {
+        nvdialog_rs::Reply::Accepted => println!("Yes selected."),
+        nvdialog_rs::Reply::Cancelled => println!("Cancel selected."),
+        nvdialog_rs::Reply::Rejected => println!("No selected."),
     }
 }

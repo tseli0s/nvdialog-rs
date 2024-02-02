@@ -24,7 +24,9 @@
 
 use std::ffi::{c_void, CString};
 
-use crate::{nvd_dialog_box_new, nvd_get_error, Error, NvdDialogBox};
+use nvdialog_sys::ffi::*;
+
+use crate::Error;
 
 /// An enumeration of the different types of dialogs that can be created.
 ///
@@ -54,7 +56,7 @@ pub enum DialogType {
 /// Showing a simple dialog box:
 ///
 /// ```
-/// use my_crate::{DialogBox, DialogType};
+/// use my_{DialogBox, DialogType};
 ///
 /// let mut dialog_box = DialogBox::new("My App", "Hello World", DialogType::Simple);
 /// dialog_box.show();
@@ -112,7 +114,7 @@ impl DialogBox {
     pub fn set_accept_label<S: AsRef<str>>(&mut self, label: S) {
         let label = CString::new(label.as_ref()).expect("CString::new error");
         unsafe {
-            crate::nvd_dialog_box_set_accept_text(self.raw, label.as_ptr());
+            nvd_dialog_box_set_accept_text(self.raw, label.as_ptr());
         }
     }
 
@@ -123,7 +125,7 @@ impl DialogBox {
     /// This function is unsafe, because it uses FFI to call C code that might not be safe.
     pub fn show(&mut self) {
         unsafe {
-            crate::nvd_show_dialog(self.raw);
+            nvd_show_dialog(self.raw);
         }
     }
 
@@ -140,7 +142,7 @@ impl DialogBox {
 impl Drop for DialogBox {
     fn drop(&mut self) {
         unsafe {
-            crate::nvd_free_object(self.raw as *mut c_void);
+            nvd_free_object(self.raw as *mut c_void);
         }
     }
 }
