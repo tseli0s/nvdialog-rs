@@ -5,10 +5,9 @@ members = [
 
 [package]
 name    = "nvdialog-rs"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
-
-repository  = "https://github.com/AndroGR/nvdialog-rs.git"
+repository  = "https://github.com/tseli0s/nvdialog-rs.git"
 description = "High-level Rust bindings for NvDialog"
 license     = "MIT"
 keywords    = [

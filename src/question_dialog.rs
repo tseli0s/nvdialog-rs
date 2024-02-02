@@ -1,7 +1,7 @@
 /*
  *  The MIT License (MIT)
  *
- *  Copyright (c) 2022-2023 Aggelos Tselios
+ *  Copyright (c) 2022-2024 Aggelos Tselios
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to
@@ -26,7 +26,6 @@ use crate::c_string;
 use nvdialog_sys::ffi::*;
 use std::ffi::{c_uint, c_void};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// # Possible button combination for question dialogs.
 /// This enum contains the button combination for a question
 /// dialog. The enum members match the original constants by NvDialog
@@ -43,7 +42,7 @@ use std::ffi::{c_uint, c_void};
 ///     let dialog = QuestionDialog::new(
 ///             "title",
 ///             "message",
-///             &QuestionDialogButtons::YesNoCancel
+///             QuestionDialogButtons::YesNoCancel
 ///     );
 ///     println!("Reply from dialog: {:?}"), dialog.get_reply());
 /// }
@@ -52,6 +51,7 @@ use std::ffi::{c_uint, c_void};
 /// - `Yes`: Corresponds to `NVD_YES`.
 /// - `YesNo`: Corresponds to `NVD_YES_NO`.
 /// - `YesNoCancel`: Corresponds to `NVD_YES_NO_CANCEL`.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum QuestionDialogButtons {
     Yes = 0x04,
     YesNo,
@@ -162,7 +162,7 @@ impl QuestionDialog {
         let t = c_string!(title.as_ref());
         let q = c_string!(msg.as_ref());
         Self {
-            raw: unsafe { nvd_dialog_question_new(t.as_ptr(), q.as_ptr(), buttons as c_uint) },
+            raw: unsafe { nvd_dialog_question_new(t.as_ptr(), q.as_ptr(), buttons.clone() as c_uint) },
             title: String::from(title.as_ref()),
             msg: String::from(msg.as_ref()),
             buttons,

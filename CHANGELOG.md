@@ -1,4 +1,9 @@
-## v0.2.0 (Unreleased)
+## v0.3.0
+- Moved completely to the `nvdialog-rs` crate. 
+- Fixed many compiler warnings.
+- Updated copyright to 2024.
+
+## v0.2.0
 - Added notification support
 - Added `Error` type
 - C string creation will now use `CString` which is safer than the previous implementation.
