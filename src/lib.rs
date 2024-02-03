@@ -47,7 +47,7 @@
 //! use nvdialog_rs::DialogType;
 //!
 //! /* Initialize the library. This corresponds to 'nvd_init' */
-//! nvdialog_rs::init(String::new());
+//! nvdialog_rs::init();
 //!
 //! /* Creating the dialog box. */
 //! let dialog_box = DialogBox::new(
@@ -71,51 +71,14 @@ mod notification;
 mod question_dialog;
 mod util;
 
+use std::ptr::null_mut;
+
 pub use dialog_box::*;
 pub use error::*;
 pub use file_dialog::*;
 pub use notification::*;
+use nvdialog_sys::ffi::nvd_init;
 pub use question_dialog::*;
-
-#[repr(C)]
-pub(crate) struct NvdDialogBox;
-#[repr(C)]
-pub(crate) struct NvdQuestionBox;
-
-#[repr(C)]
-pub(crate) struct NvdFileDialog;
-
-#[repr(C)]
-pub(crate) struct NvdNotification;
-
-#[repr(C)]
-#[allow(non_camel_case_types)]
-enum NvdError {
-    NVD_NO_ERROR = 0,
-    NVD_NO_DISPLAY = 0xff,
-    NVD_BACKEND_FAILURE,
-    NVD_INVALID_PARAM,
-    NVD_NOT_INITIALIZED,
-    NVD_BACKEND_INVALID,
-    NVD_FILE_INACCESSIBLE,
-    NVD_STRING_EMPTY,
-    NVD_OUT_OF_MEMORY,
-    NVD_INTERNAL_ERROR,
-    NVD_ALREADY_INITIALIZED,
-}
-
-#[repr(C)]
-#[allow(non_camel_case_types)]
-pub(crate) enum NvdNotifyType {
-    NVD_NOTIFICATION_SIMPLE = 0,
-    NVD_NOTIFICATION_WARNING = 1,
-    NVD_NOTIFICATION_ERROR = 2,
-}
-
-#[link(name = "nvdialog")]
-extern "C" {
-    pub(crate) fn nvd_init() -> i32;
-}
 
 /// Initialize NvDialog in the current thread.
 ///
@@ -162,7 +125,7 @@ extern "C" {
 /// # FFI
 /// Corresponds to `nvd_init`.
 pub fn init() -> Result<(), Error> {
-    let result = unsafe { nvd_init() };
+    let result = unsafe { nvd_init(null_mut()) };
 
     if result == 0 {
         Ok(())
