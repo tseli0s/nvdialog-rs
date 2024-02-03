@@ -162,7 +162,13 @@ impl QuestionDialog {
         let t = c_string!(title.as_ref());
         let q = c_string!(msg.as_ref());
         Self {
-            raw: unsafe { nvd_dialog_question_new(t.as_ptr(), q.as_ptr(), buttons.clone() as c_uint) },
+            raw: unsafe {
+                nvd_dialog_question_new(
+                    t.as_ptr(),
+                    q.as_ptr(),
+                    buttons.clone() as c_uint
+                )
+            },
             title: String::from(title.as_ref()),
             msg: String::from(msg.as_ref()),
             buttons,
