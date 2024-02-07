@@ -23,9 +23,7 @@
  */
 
 use std::ffi::{c_void, CString};
-
 use nvdialog_sys::ffi::*;
-
 use crate::Error;
 
 /// An enumeration of the different types of dialogs that can be created.
