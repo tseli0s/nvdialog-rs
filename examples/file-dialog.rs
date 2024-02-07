@@ -43,11 +43,12 @@ fn main() {
     );
 
     if let Some(file) = file_dialog.retrieve_filename() {
-        let mut dialog_box =
-            DialogBox::new("File chosen", &file.to_str().unwrap(), DialogType::Simple)
-                .expect("Can't create dialog");
-        dialog_box.show();
+        DialogBox::new("File chosen", &file.to_str().unwrap(), DialogType::Simple)
+            .expect("Can't create dialog")
+            .show()
     } else {
-        eprintln!("No file chosen!");
+        DialogBox::new("Error", "No file chosen", DialogType::Error)
+            .expect("Can't create dialog")
+            .show()
     }
 }
