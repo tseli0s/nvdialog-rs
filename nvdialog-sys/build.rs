@@ -20,7 +20,7 @@ fn main() {
 
     let dst = Config::new("./nvdialog")
         .build_target("nvdialog")
-        .define("NVD_BUILD_STATIC", "OFF")
+        .define("NVD_BUILD_STATIC", "ON")
         .define("NVDIALOG_MAXBUF", "256")
         .define("NVD_USE_GTK4", "OFF")
         .define(
@@ -32,27 +32,6 @@ fn main() {
             },
         )
         .build();
-
-    #[cfg(target_os = "linux")]
-    {
-        match pkg_config::Config::new().probe("gtk+-3.0") {
-            Ok(library) => {
-                println!("Found Gtk3, version {}.", library.version);
-                println!("Link paths: {:?}", library.link_paths);
-                println!("Link libraries: {:?}", library.libs);
-
-                for path in library.link_paths {
-                    println!("cargo:rustc-link-search=native={}", path.display());
-                }
-                for lib in library.libs {
-                    println!("cargo:rustc-link-lib={}", lib);
-                }
-            }
-            Err(_) => {
-                panic!("You need Gtk3 on Linux to use NvDialog.")
-            }
-        }
-    }
 
     println!("cargo:rustc-link-search=native={}/build/", dst.display());
     println!("cargo:rustc-link-lib=nvdialog");
