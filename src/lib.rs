@@ -70,11 +70,11 @@ mod file_dialog;
 mod notification;
 mod question_dialog;
 mod util;
-
-use std::ptr::null_mut;
+mod about_dialog;
 
 pub use dialog_box::*;
 pub use error::*;
+pub use about_dialog::*;
 pub use file_dialog::*;
 pub use notification::*;
 use nvdialog_sys::ffi::nvd_init;
@@ -125,7 +125,7 @@ pub use question_dialog::*;
 /// # FFI
 /// Corresponds to `nvd_init`.
 pub fn init() -> Result<(), Error> {
-    let result = unsafe { nvd_init(null_mut()) };
+    let result = unsafe { nvd_init() };
 
     if result == 0 {
         Ok(())
