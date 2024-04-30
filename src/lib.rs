@@ -125,7 +125,7 @@ pub use question_dialog::*;
 /// # FFI
 /// Corresponds to `nvd_init`.
 pub fn init() -> Result<(), Error> {
-    let result = unsafe { nvd_init() };
+    let result = unsafe { nvd_init(std::ptr::null_mut()) };
 
     if result == 0 {
         Ok(())
