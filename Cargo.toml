@@ -18,11 +18,11 @@ keywords    = [
 
 [dependencies]
 thiserror    = "1.0.40"
-nvdialog-sys = { path = "nvdialog-sys", version = "*" }
+nvdialog-sys = { path = "nvdialog-sys", version = "0.9.0" }
 
 [lib]
 doctest = false
 
 [features]
 use-pkg-config = [ "nvdialog-sys/use-pkg-config" ]
-default = []
+default = [ "use-pkg-config" ]
