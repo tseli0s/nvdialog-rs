@@ -40,6 +40,7 @@ use crate::{cstr, Image};
 /// let dialog = AboutDialog::new()
 ///                 .name("App Name".into())
 ///                 .description("A short description for your app".into())
+///                 .version("0.1.0")
 ///                 .build();
 /// 
 /// dialog.show()
@@ -47,6 +48,7 @@ use crate::{cstr, Image};
 pub struct AboutDialog {
     app_name: String,
     details: String,
+    version: String,
     icon: Option<Image>,
     raw: *mut NvdAboutDialog
 }
@@ -56,21 +58,26 @@ impl AboutDialog {
         Self {
             app_name: String::new(),
             details: String::new(),
+            version: String::new(),
             icon: None,
             raw: std::ptr::null_mut(),
         }
     }
 
-    pub fn name(mut self, name: String) -> Self {
-        self.app_name = name;
+    pub fn name<S: ToString>(mut self, name: S) -> Self {
+        self.app_name = name.to_string();
         self
     }
 
-    pub fn description(mut self, description: String) -> Self {
-        self.details = description;
+    pub fn description<S: ToString>(mut self, description: S) -> Self {
+        self.details = description.to_string();
         self
     }
 
+    pub fn version<S: ToString>(mut self, version: S) -> Self {
+        self.version = version.to_string();
+        self
+    }
 
     pub fn icon(mut self, icon: Image) -> Self {
         self.icon = Some(icon);
@@ -81,17 +88,19 @@ impl AboutDialog {
         let dialog = unsafe {
             let n = cstr!(&*self.app_name);
             let d = cstr!(&*self.details);
-            nvd_about_dialog_new(
+            let v = cstr!(&*self.version);
+            let raw = nvd_about_dialog_new(
                 n.as_ptr(),
                 d.as_ptr(),
                 std::ptr::null_mut()
-            )
-        };
-        if let Some(ref i) = self.icon {
-            unsafe {
-                nvd_dialog_set_icon(self.raw, i.get_raw())
+            );
+            nvd_about_dialog_set_version(raw, v.as_ptr());
+            if let Some(ref i) = self.icon {
+                nvd_dialog_set_icon(raw, i.get_raw())
             }
-        }
+            raw
+        };
+        
         self.raw = dialog;
         self
     }
