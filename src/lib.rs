@@ -132,14 +132,11 @@ pub fn init() -> Result<(), Error> {
     let result = unsafe { nvd_init() };
 
     if result == 0 {
-        println!("good: {}", result);
         Ok(())
     } else {
-        println!("not good: {}", result);
         Err(Error::from(result))
     }
 }
-
 /// Sets the application name for NvDialog.
 ///
 /// This function sets the application name for NvDialog, often used in notifications
