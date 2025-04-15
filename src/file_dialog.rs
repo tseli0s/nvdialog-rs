@@ -30,8 +30,9 @@ use std::{
     ptr::null_mut,
 };
 
-/// # Mode of the file dialog
-/// A file dialog may either be used for getting a file (`OpenFile`) or
+/// Mode of the file dialog
+/// 
+/// A file dialog may either be used for getting a file (`OpenFile`), getting a directory (`OpenFolder`) or
 /// saving a file (`SaveFile`). When creating a new file dialog, you must set
 /// its mode by one of the enums below.
 /// # Example
@@ -80,7 +81,7 @@ pub enum FileDialogType {
 /// }
 /// ```
 /// ## FFI
-/// Matches with `NvdFileDialog`.
+/// Corresponds to `NvdFileDialog`.
 pub struct FileDialog {
     raw: *mut NvdFileDialog,
     location_chosen: Option<String>,

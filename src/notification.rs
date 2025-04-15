@@ -25,7 +25,8 @@
 use crate::cstr;
 use nvdialog_sys::ffi::*;
 
-/// A notification dialog, which can be used to send a notification to the user.
+/// A notification dialog, which can be used to send a notification to the user
+/// through the system's API.
 ///
 /// # Examples
 /// ```
@@ -39,6 +40,9 @@ pub struct Notification {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+/// [`NotificationKind`] defines a type that can represent different kinds of notifications. 
+/// The enum has three variants:
+/// `Simple`, `Warning`, and `Error`, each representing a different kind of notification.
 pub enum NotificationKind {
     Simple,
     Warning,
@@ -93,6 +97,14 @@ impl Notification {
         Ok(Self { raw })
     }
 
+    /// The `add_action` function in Rust adds a notification action with a specified name, value, and
+    /// pointer.
+    /// 
+    /// Arguments:
+    /// 
+    /// * [`name`]: A string that that represents the name of an action to be added.
+    /// * [`val`]: The value to save in the address pointed to by [`ptr`]
+    /// * [`ptr`]: A pointer to the variable to save the response to
     pub fn add_action<S: AsRef<str>>(&mut self, name: S, val: i32, ptr: &mut i32) {
         let a = cstr!(name.as_ref());
         unsafe {
@@ -113,34 +125,6 @@ impl Notification {
     ///
     /// // Send the notification
     /// notification.send();
-    /// ```
-    ///
-    /// Note that calling `send` multiple times will result in multiple notifications being shown:
-    ///
-    /// ```
-    /// use nvdialog_rs::{Notification, NotificationKind};
-    /// let mut notification = Notification::new("Title", "Body", NotificationKind::Simple)
-    ///     .expect("Failed to create notification");
-    /// // Send the notification
-    /// notification.send();
-    /// ```
-    ///
-    /// It is safe to call this method on a notification that has not yet been shown, as well as
-    /// on a notification that has already been shown or sent.
-    /// ```
-    /// # use nvdialog_rs::{Notification, NotificationKind};
-    /// # let mut notification = Notification::new("Title", "Body", NotificationKind::Simple)
-    /// #     .expect("Failed to create notification");
-    /// // Send the notification
-    /// notification.send();
-    ///
-    /// // It is safe to call `send` multiple times
-    /// notification.send();
-    ///
-    /// // It is also safe to call `send` on a notification that hasn't been shown yet
-    /// let mut other_notification = Notification::new("Other title", "Other body", NotificationKind::Simple)
-    ///     .expect("Failed to create notification");
-    /// other_notification.send();
     /// ```
     ///
     /// # FFI

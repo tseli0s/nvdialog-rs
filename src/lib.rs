@@ -22,27 +22,27 @@
  * IN THE SOFTWARE.
  */
 
-//! This crate offers high level, low overhead bindings to NvDialog for Rust. It's the successor of
-//! the [`nvdialog`](https://crates.io/crates/nvdialog) crate which provided system bindings to NvDialog
-//! using `libloading`.
+//! This crate provides high-level, low-overhead bindings to NvDialog for Rust, and serves as the successor to the
+//!  [`nvdialog``](https://crates.io/crates/nvdialog) crate. Unlike its predecessor, this crate does not rely on libloading
+//! for system bindings to NvDialog, offering a more direct integration by manually building and linking with `libnvdialog` through `nvdialog-sys`.
 //!
 //! # Safety
-//! The crate tries to imitate Rust's compile time checks with NvDialog, to ensure that safety is
-//! present within your code. This includes adding mutable references when an FFI call changes something
-//! instead of plain references (Which aren't checked anyways).
+//! The crate strives to replicate Rust’s compile-time safety checks within the context of NvDialog to ensure the integrity of your code.
+//! For instance, we use mutable references where necessary in FFI calls that modify data, avoiding plain references
+//! which aren't checked by Rust's borrow checker.
+//! 
+//! # Threading Considerations
+//! NvDialog’s threading rules remain the same, regardless of the language. Dialogs should always be created and used on the same thread.
+//! While it's technically possible to create dialogs from secondary threads, it is not officially supported and can lead
+//! to issues on certain platforms. Specifically:
 //!
-//! When it comes to threads, NvDialog's rules don't change here either: The dialogs must be created and used
-//! within the same thread. Creating dialogs from secondary threads is not supported officially, but may work
-//! on some platforms. In general:
-//! - Windows does allow it to some extend, but it's unsafe and not recommended.
-//! - macOS does not allow any UI operations outside the main thread.
-//! - Gtk on Linux does not support it directly, but GLib offers ways to safely send data between threads.
-//!
-//!
+//! - **Windows**: Creating dialogs from secondary threads may work in a lot of cases, but it is considered unsafe and not recommended.
+//! - **macOS**: UI operations, including dialogs, must be performed on the main thread. Creating dialogs from other threads is not supported.
+//! - **Gtk3/4 (GNU/Linux)**: While Gtk does not directly support cross-thread UI operations, GLib provides mechanisms to safely send data between threads. However `nvdialog-rs` does not make use of them, meaning sending and receiving data across threads is still unsupported.
+ 
+ 
 //! # Example dialog:
 //! ```rust
-//! /* Importing types */
-//! extern crate nvdialog_rs;
 //! use nvdialog_rs::DialogBox;
 //! use nvdialog_rs::DialogType;
 //!
@@ -61,6 +61,8 @@
 //! /* Showing the dialog box. */
 //! dialog_box.show();
 //! ```
+//! Memory management is performed automatically internally by implementing Drop on all types, therefore every dialog is implicitly freeing
+//! any memory it used at the end of scope.
 
 #![allow(dead_code, improper_ctypes)]
 

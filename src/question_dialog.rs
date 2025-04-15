@@ -26,10 +26,10 @@ use crate::cstr;
 use nvdialog_sys::ffi::*;
 use std::ffi::{c_uint, c_void};
 
-/// # Possible button combination for question dialogs.
-/// This enum contains the button combination for a question
-/// dialog. The enum members match the original constants by NvDialog
-/// for better FFI support (see [Members](#members))
+
+/// Represents the buttons that can be displayed on a `QuestionDialog`.
+///
+///
 /// # Example
 /// ```
 /// extern crate nvdialog_rs;
