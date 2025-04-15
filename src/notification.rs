@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  */
 
-use crate::c_string;
+use crate::cstr;
 use nvdialog_sys::ffi::*;
 
 /// A notification dialog, which can be used to send a notification to the user.
@@ -83,8 +83,8 @@ impl Notification {
         msg: S,
         kind: NotificationKind,
     ) -> Result<Self, crate::Error> {
-        let t = c_string!(title.as_ref());
-        let m = c_string!(msg.as_ref());
+        let t = cstr!(title.as_ref());
+        let m = cstr!(msg.as_ref());
         let raw = unsafe { nvd_notification_new(t.as_ptr(), m.as_ptr(), kind.into()) };
 
         if raw.is_null() {
@@ -94,7 +94,7 @@ impl Notification {
     }
 
     pub fn add_action<S: AsRef<str>>(&mut self, name: S, val: i32, ptr: &mut i32) {
-        let a = c_string!(name.as_ref());
+        let a = cstr!(name.as_ref());
         unsafe {
             nvd_add_notification_action(self.raw, a.as_ptr(), val, ptr);
         }

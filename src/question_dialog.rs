@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  */
 
-use crate::c_string;
+use crate::cstr;
 use nvdialog_sys::ffi::*;
 use std::ffi::{c_uint, c_void};
 
@@ -159,8 +159,8 @@ impl QuestionDialog {
     /// ```
 
     pub fn new<S: AsRef<str>>(title: S, msg: S, buttons: QuestionDialogButtons) -> Self {
-        let t = c_string!(title.as_ref());
-        let q = c_string!(msg.as_ref());
+        let t = cstr!(title.as_ref());
+        let q = cstr!(msg.as_ref());
         Self {
             raw: unsafe {
                 nvd_dialog_question_new(

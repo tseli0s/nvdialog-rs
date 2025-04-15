@@ -25,7 +25,7 @@
 #![macro_use]
 
 #[macro_export]
-macro_rules! c_string {
+macro_rules! cstr {
     ($rstr:expr) => {
         std::ffi::CString::new($rstr)
             .expect("CString::new error")

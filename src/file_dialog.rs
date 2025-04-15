@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  */
 
-use crate::c_string;
+use crate::cstr;
 use nvdialog_sys::ffi::*;
 use std::{
     ffi::{c_char, CStr},
@@ -135,7 +135,7 @@ impl FileDialog {
         }
         match type_of_dialog {
             FileDialogType::OpenFile => {
-                let t = c_string!(title.as_ref());
+                let t = cstr!(title.as_ref());
                 Self {
                 raw: unsafe {
                     nvd_open_file_dialog_new(
@@ -150,8 +150,8 @@ impl FileDialog {
                 location_chosen: None,
             }},
             FileDialogType::SaveFile => {
-                let t = c_string!(title.as_ref());
-                let f = c_string!("filename");
+                let t = cstr!(title.as_ref());
+                let f = cstr!("filename");
                 Self {
                     raw: unsafe {
                         nvd_save_file_dialog_new(
@@ -163,7 +163,7 @@ impl FileDialog {
                 }
             },
             FileDialogType::OpenFolder => {
-                let t = c_string!(title.as_ref());
+                let t = cstr!(title.as_ref());
                 Self {
                     raw: unsafe {
                         nvd_open_folder_dialog_new(t.as_ptr(), null_mut())

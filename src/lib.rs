@@ -146,7 +146,7 @@ pub fn init() -> Result<(), Error> {
 /// **NOTICE:** Do not confuse this function with your program's executable name! That used to be
 /// handled by [`crate::init`] but has been deprecated entirely!
 pub fn set_app_name<S: AsRef<str>>(name: S) {
-    let name = c_string!(name.as_ref());
+    let name = cstr!(name.as_ref());
     unsafe {
         nvdialog_sys::ffi::nvd_set_application_name(name.as_ptr());
     }

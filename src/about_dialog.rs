@@ -24,7 +24,7 @@
 
 use nvdialog_sys::ffi::*;
 
-use crate::{c_string, Image};
+use crate::{cstr, Image};
 
 /// A struct for a dialog to show about your application.
 /// 
@@ -79,8 +79,8 @@ impl AboutDialog {
 
     pub fn build(mut self) -> Self {
         let dialog = unsafe {
-            let n = c_string!(&*self.app_name);
-            let d = c_string!(&*self.details);
+            let n = cstr!(&*self.app_name);
+            let d = cstr!(&*self.details);
             nvd_about_dialog_new(
                 n.as_ptr(),
                 d.as_ptr(),

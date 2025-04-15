@@ -26,7 +26,7 @@ use std::path::PathBuf;
 use nvdialog_sys::ffi::*;
 use thiserror::Error;
 
-use crate::c_string;
+use crate::cstr;
 
 /// A simple image loaded from NvDialog. This is the equivalent to `NvdImage`, although the implementation
 /// makes a few extra safety checks from the Rust side.
@@ -78,7 +78,7 @@ impl Image {
         if !filename.exists() { return Err(ImageError::PathNotFound); }
         let mut w = 0;
         let mut h = 0;
-        let data = unsafe { nvd_image_from_filename(c_string!(filename.to_str().unwrap()).as_ptr(), &mut w, &mut h) };
+        let data = unsafe { nvd_image_from_filename(cstr!(filename.to_str().unwrap()).as_ptr(), &mut w, &mut h) };
         let raw = unsafe { nvd_create_image(data, w, h) };
         if raw.is_null() { return Err(ImageError::UnknownError); }
 
