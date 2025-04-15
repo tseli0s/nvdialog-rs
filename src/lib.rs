@@ -23,7 +23,7 @@
  */
 
 //! This crate provides high-level, low-overhead bindings to NvDialog for Rust, and serves as the successor to the
-//!  [`nvdialog``](https://crates.io/crates/nvdialog) crate. Unlike its predecessor, this crate does not rely on libloading
+//!  [`nvdialog`](https://crates.io/crates/nvdialog) crate. Unlike its predecessor, this crate does not rely on libloading
 //! for system bindings to NvDialog, offering a more direct integration by manually building and linking with `libnvdialog` through `nvdialog-sys`.
 //!
 //! # Safety
