@@ -27,7 +27,7 @@ use nvdialog_rs::QuestionDialog;
 use nvdialog_rs::QuestionDialogButtons;
 
 fn main() {
-    nvdialog_rs::init().expect("Can't initialize NvDialog");
+    nvdialog_rs::init().expect("failed to initialize nvdialog");
     let mut dialog = QuestionDialog::new(
         "Which message should be shown?",
         "Select between Yes/No/Cancel please.",

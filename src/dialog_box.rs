@@ -22,9 +22,9 @@
  * IN THE SOFTWARE.
  */
 
-use std::ffi::{c_void, CString};
-use nvdialog_sys::ffi::*;
 use crate::Error;
+use nvdialog_sys::ffi::*;
+use std::ffi::{c_void, CString};
 
 /// An enumeration of the different types of dialogs that can be created.
 ///

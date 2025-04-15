@@ -24,6 +24,8 @@
 
 use nvdialog_sys::ffi::*;
 
+use crate::{c_string, Image};
+
 /// A struct for a dialog to show about your application.
 /// 
 /// Dialogs like this are used in the traditional Help > About dialogs found in most programs.
@@ -45,7 +47,7 @@ use nvdialog_sys::ffi::*;
 pub struct AboutDialog {
     app_name: String,
     details: String,
-    icon: String,
+    icon: Option<Image>,
     raw: *mut NvdAboutDialog
 }
 
@@ -54,7 +56,7 @@ impl AboutDialog {
         Self {
             app_name: String::new(),
             details: String::new(),
-            icon: String::new(),
+            icon: None,
             raw: std::ptr::null_mut(),
         }
     }
@@ -70,8 +72,8 @@ impl AboutDialog {
     }
 
 
-    pub fn icon(mut self, icon: String) -> Self {
-        self.icon = icon;
+    pub fn icon(mut self, icon: Image) -> Self {
+        self.icon = Some(icon);
         self
     }
 
@@ -79,13 +81,17 @@ impl AboutDialog {
         let dialog = unsafe {
             let n = c_string!(&*self.app_name);
             let d = c_string!(&*self.details);
-            let _i = c_string!(&*self.icon);
             nvd_about_dialog_new(
                 n.as_ptr(),
                 d.as_ptr(),
-                std::ptr::null_mut() // TODO: Fix this
+                std::ptr::null_mut()
             )
         };
+        if let Some(ref i) = self.icon {
+            unsafe {
+                nvd_dialog_set_icon(self.raw, i.get_raw())
+            }
+        }
         self.raw = dialog;
         self
     }

@@ -1,3 +1,10 @@
+## v0.3.1
+- Fixed linking errors on Linux with Gtk
+- Added image API
+- Update file dialog API
+- Fix `c_string!()` macro warning
+- Fix build on Windows
+
 ## v0.3.0
 - Moved completely to the `nvdialog-rs` crate. 
 - Fixed many compiler warnings.

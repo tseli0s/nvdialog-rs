@@ -53,6 +53,7 @@ use std::{
 pub enum FileDialogType {
     OpenFile,
     SaveFile,
+    OpenFolder,
 }
 
 /// A struct representing a file dialog window.
@@ -157,6 +158,15 @@ impl FileDialog {
                             t.as_ptr(),
                             f.as_ptr()
                         )
+                    },
+                    location_chosen: None,
+                }
+            },
+            FileDialogType::OpenFolder => {
+                let t = c_string!(title.as_ref());
+                Self {
+                    raw: unsafe {
+                        nvd_open_folder_dialog_new(t.as_ptr(), null_mut())
                     },
                     location_chosen: None,
                 }

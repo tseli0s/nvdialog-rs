@@ -1,7 +1,0 @@
-{
-    "files.watcherExclude": {
-        "**/.dart_tool": true,
-        ".flatpak/**": true,
-        "_build/**": true
-    }
-}

@@ -1,7 +1,5 @@
 [workspace]
-members = [
-        "nvdialog-sys"
-]
+members = [ "nvdialog-sys" ]
 
 [package]
 name    = "nvdialog-rs"

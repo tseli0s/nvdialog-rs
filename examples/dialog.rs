@@ -26,7 +26,7 @@ use nvdialog_rs::DialogBox;
 use nvdialog_rs::DialogType;
 
 fn main() {
-    nvdialog_rs::init().expect("Can't initialize NvDialog!");
+    nvdialog_rs::init();
 
     let mut dialog_box = DialogBox::new(
         "Hello World (from Rust!)",

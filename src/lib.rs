@@ -64,18 +64,20 @@
 
 #![allow(dead_code, improper_ctypes)]
 
+mod about_dialog;
 mod dialog_box;
 mod error;
 mod file_dialog;
+mod image;
 mod notification;
 mod question_dialog;
 mod util;
-mod about_dialog;
 
+pub use about_dialog::*;
 pub use dialog_box::*;
 pub use error::*;
-pub use about_dialog::*;
 pub use file_dialog::*;
+pub use image::*;
 pub use notification::*;
 use nvdialog_sys::ffi::nvd_init;
 pub use question_dialog::*;
@@ -128,8 +130,10 @@ pub fn init() -> Result<(), Error> {
     let result = unsafe { nvd_init() };
 
     if result == 0 {
+        println!("good: {}", result);
         Ok(())
     } else {
+        println!("not good: {}", result);
         Err(Error::from(result))
     }
 }
