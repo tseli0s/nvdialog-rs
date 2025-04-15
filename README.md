@@ -1,23 +1,32 @@
 <div align="center" style="padding-top: 25px;">
         <img src="assets/logo.svg" width="256px">
-        <h1>nvdialog-rs: Rust bindings to NvDialog</h1>
+        <h1>nvdialog-rs: Safe, elegant Rust bindings for <a href="https://github.com/tseli0s/nvdialog">NvDialog</a></h1>
+        <p>
+        `nvdialog-rs` provides high-level Rust bindings to the libnvdialog library, enabling developers to easily integrate native dialog boxes into their applications. This crate eliminates the complexity of working directly with C pointers, ensuring a safe and ergonomic Rust interface that allows Rust projects to safely use the libnvdialog library.
+        </p>
+        <p>
+        For your convenience, libnvdialog is built and linked along with the crate and packaged as a static library along with your application.
+        The heavy work is done by the <a href="./nvdialog-sys/"><code>nvdialog-sys</code></a> crate which provides a bridge between the C and Rust projects. This means that you won't need to ship a copy of NvDialog along with your application.
+        </p>
         <img src="https://img.shields.io/crates/v/nvdialog-rs?style=flat-square">
         <img src="https://img.shields.io/docsrs/nvdialog-rs?label=Documentation&style=flat-square">
-        <img src="https://img.shields.io/github/license/AndroGR/nvdialog-rs?style=flat-square">
+        <img src="https://img.shields.io/github/license/tseli0s/nvdialog-rs?style=flat-square">
 </div>
 
-This crate offers Rust bindings to [NvDialog](https://github.com/AndroGR/nvdialog) and abstracts away the pointers and other nasty stuff in favor of Rust principles. This crate **will NOT build NvDialog manually**. You should have a build of NvDialog available in your system at runtime or package it with your application.
-
 # Features
-- High-level Rust bindings with increased safety around the C parts.
-- Native-dialogs using the OS's API.
-- File dialogs, Notifications, Dialog Boxes, and other dialogs supported by NvDialog.
-- Low-overhead.
-- Extremely easy to use.
-- Only one dependency!
+- **Rust Safety**: Enjoy the power of NvDialog with the full safety and ergonomics of Rust.
+- **Native Dialogs**: Leverage your OS's native API to create platform-specific dialogs (e.g., file pickers, notifications, etc.).
+- **Comprehensive Dialog Support**: From file pickers to custom dialog boxes, nvdialog-rs supports the full range of dialog types provided by NvDialog.
+- **Minimal Overhead**: Designed for efficiency with minimal performance impact.
+- **Simple API**: The crate provides an easy, human-readable API to interact with libnvdialog.
+- **Light Dependency**: Only one tiny dependency—no unnecessary bloat.
 
-# NOTE:
-The [`nvdialog`](https://crates.io/crates/nvdialog) crate (Which I also created) has been deprecated and replaced by this crate, which is much more minimal and easy to use. If you have been using the former, immediately switch to this one.
+# Installation and usage
+To add `nvdialog-rs` to your project, simply include it in your Cargo.toml file:
+```toml
+[dependencies]
+nvdialog-rs = "0.3.1"
+```
 
 # Example
 ```rust
@@ -27,7 +36,7 @@ use nvdialog_rs::DialogType;
 
 fn main() {
         /* Initialize the library. This corresponds to `nvd_init` */
-        nvdialog_rs::init();
+        nvdialog_rs::init().expect("Failed to initialize NvDialog");
 
         /* Creating the dialog box. */
         DialogBox::new(
@@ -40,6 +49,7 @@ fn main() {
          .show();
 }
 ```
+In just a few lines of code, you can create and display a dialog with a native look and feel on your system. The library is designed to minimize boilerplate and ensure a smooth user experience.
 
 # License
 This library is licensed under the MIT License:
@@ -53,3 +63,14 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
+
+# Contributing
+We welcome contributions to `nvdialog-rs!` Whether you're reporting bugs, suggesting features, or submitting code improvements, your input is valuable:
+
+- Fork the repository.
+- Create a new branch for your changes.
+- Submit a pull request with a clear description of your changes and their purpose.
+
+# Support
+If you encounter any issues or have questions, please feel free to open an issue in the GitHub repository. We also encourage you to check the documentation for detailed information on how to use the crate.
+
