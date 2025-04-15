@@ -36,8 +36,7 @@ fn main() {
     println!("cargo:rustc-link-search=native={}/build/", dst.display());
     println!("cargo:rustc-link-lib=static=nvdialog");
 
-    #[cfg(target_os = "linux")]
-    #[cfg(feature = "use-pkg-config")]
+    #[cfg(all(target_os = "linux", feature = "use-pkg-config"))]
     for l in pkg_config::Config::new()
         .atleast_version("3.0")
         .probe("gtk+-3.0")
