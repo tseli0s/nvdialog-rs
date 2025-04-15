@@ -1,7 +1,7 @@
 /*
  *  The MIT License (MIT)
  *
- *  Copyright (c) 2022-2024 Aggelos Tselios
+ *  Copyright (c) 2022-2025 Aggelos Tselios
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to
@@ -26,7 +26,7 @@ use nvdialog_rs::DialogBox;
 use nvdialog_rs::DialogType;
 
 fn main() {
-    nvdialog_rs::init();
+    nvdialog_rs::init().expect("failed to initialize nvdialog");
 
     let mut dialog_box = DialogBox::new(
         "Hello World (from Rust!)",

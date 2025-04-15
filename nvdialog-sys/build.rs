@@ -37,6 +37,7 @@ fn main() {
     println!("cargo:rustc-link-lib=static=nvdialog");
 
     #[cfg(target_os = "linux")]
+    #[cfg(feature = "use-pkg-config")]
     for l in pkg_config::Config::new()
         .atleast_version("3.0")
         .probe("gtk+-3.0")
@@ -44,5 +45,13 @@ fn main() {
         .libs
     {
         println!("cargo:rustc-link-lib={}", l);
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        let libs = [ "shell32", "user32", "gdi32", "ole32" ];
+        for l in libs {
+            println!("cargo:rustc-link-lib={}", l);
+        }
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name    = "nvdialog-sys"
-version = "0.8.0"
+version = "0.9.0"
 edition = "2021"
 license = "MIT"
 description = "Raw FFI Bindings to NvDialog"
@@ -8,4 +8,8 @@ description = "Raw FFI Bindings to NvDialog"
 [build-dependencies]
 bindgen = "0.69.2"
 cmake   = "0.1.50"
-pkg-config = "0.3.26"
+pkg-config = { version = "0.3.26", optional = true }
+
+[features]
+use-pkg-config = [ "pkg-config" ]
+default = []
