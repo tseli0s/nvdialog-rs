@@ -36,10 +36,20 @@
 /// 
 
 pub trait Object {
+    /// The type of the underlying native object, created by `NvDialog`. It will be used as a pointer
+    /// to provide compatibility with the `NvDialog` API.
     type NativeType;
+    /// The value that should be returned from [`Self::show`]. It should match the value that the dialog returns when
+    /// it is presented to the user.
     type ReturnValue;
 
+    /// Returns the raw object created by NvDialog internally. This should never return `null`.
     fn get_raw(&self) -> *mut Self::NativeType;
+    /// Presents the dialog to the user. If [`Self::ReturnValue`] is not `()` then it will also return that value.
+    /// Sometimes this serves as an alias to the type's implementation of the analogous function. If you cannot afford the overhead,
+    /// you can use that instead.
     fn show(&self) -> Self::ReturnValue;
+    /// Frees the underlying native object. This should not be usually called manually, instead the [`Drop`] implementation should
+    /// handle it when the time is correct. Be wary, if you do call this, you might run into double freeing errors.
     fn free(&mut self);
 }
