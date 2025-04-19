@@ -42,7 +42,7 @@ fn main() {
             "webp".to_owned(),
         ]),
     );
-
+    
     if let Some(file) = file_dialog.retrieve_filename() {
         DialogBox::new("File chosen", &file.to_str().unwrap(), DialogType::Simple)
             .expect("Can't create dialog")
