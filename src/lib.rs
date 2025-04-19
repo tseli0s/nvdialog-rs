@@ -74,6 +74,7 @@ mod image;
 mod notification;
 mod question_dialog;
 mod util;
+mod object;
 
 pub use about_dialog::*;
 pub use dialog_box::*;
@@ -83,6 +84,7 @@ pub use image::*;
 pub use notification::*;
 use nvdialog_sys::ffi::nvd_init;
 pub use question_dialog::*;
+pub use object::*;
 
 /// Initialize NvDialog in the current thread.
 ///

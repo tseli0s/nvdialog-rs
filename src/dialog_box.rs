@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  */
 
-use crate::Error;
+use crate::{Error, Object};
 use nvdialog_sys::ffi::*;
 use std::ffi::{c_void, CString};
 
@@ -115,32 +115,27 @@ impl DialogBox {
             nvd_dialog_box_set_accept_text(self.raw, label.as_ptr());
         }
     }
+}
 
-    /// Displays the dialog box on the screen.
-    ///
-    /// This function shows the dialog box on the screen, allowing the user to interact with it.
-    /// It should be called after setting any necessary options and buttons on the dialog.
-    /// This function is unsafe, because it uses FFI to call C code that might not be safe.
-    pub fn show(&mut self) {
-        unsafe {
-            nvd_show_dialog(self.raw);
-        }
+impl Object for DialogBox {
+    type NativeType = NvdDialogBox;
+    type ReturnValue = ();
+
+    fn get_raw(&self) -> *mut Self::NativeType {
+        self.raw
     }
 
-    /// Returns the raw pointer to the dialog box created
-    /// from NvDialog directly.
-    ///
-    /// Marked as `unsafe` because accessing the internal struct is not officially
-    /// supported by NvDialog and may cause race conditions.
-    unsafe fn get_raw(&mut self) -> *mut NvdDialogBox {
-        self.raw
+    fn show(&self) {
+        unsafe { nvd_show_dialog(self.raw); }
+    }
+
+    fn free(&mut self) {
+        unsafe { nvd_free_object(self.raw as *mut c_void); }
     }
 }
 
 impl Drop for DialogBox {
     fn drop(&mut self) {
-        unsafe {
-            nvd_free_object(self.raw as *mut c_void);
-        }
+        self.free();
     }
 }

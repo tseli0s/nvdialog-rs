@@ -26,7 +26,7 @@ use nvdialog_rs::{Notification, NotificationKind};
 
 fn main() {
     nvdialog_rs::init().expect("Failed to initialize NvDialog!");
-    let mut notification = Notification::new(
+    let notification = Notification::new(
         "Notification from Rust!",
         "Here's a notification using nvdialog-rs!",
         NotificationKind::Simple,

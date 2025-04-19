@@ -27,10 +27,11 @@ use nvdialog_rs::DialogBox;
 use nvdialog_rs::DialogType;
 use nvdialog_rs::FileDialog;
 use nvdialog_rs::FileDialogType;
+use nvdialog_rs::Object;
 
 fn main() {
     nvdialog_rs::init().expect("Can't initialize NvDialog");
-    let mut file_dialog = FileDialog::new(
+    let file_dialog = FileDialog::new(
         String::from("Select an image"),
         FileDialogType::OpenFile,
         Some(vec![

@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  */
 
-use crate::cstr;
+use crate::{cstr, Object};
 use nvdialog_sys::ffi::*;
 use std::ffi::{c_uint, c_void};
 
@@ -191,7 +191,7 @@ impl QuestionDialog {
     ///     // Do nothing.
     /// }
     /// ```
-    pub fn get_reply(&mut self) -> Reply {
+    pub fn get_reply(&self) -> Reply {
         Reply::from(unsafe { nvd_get_reply(self.raw) })
     }
 }
@@ -210,10 +210,28 @@ impl From<u32> for Reply {
     }
 }
 
-impl Drop for QuestionDialog {
-    fn drop(&mut self) {
+impl Object for QuestionDialog {
+    type NativeType = NvdQuestionBox;
+    type ReturnValue = Reply;
+
+    fn get_raw(&self) -> *mut NvdQuestionBox {
+        self.raw
+    }
+    
+    fn show(&self) -> Reply {
+        self.get_reply()
+    }
+    
+    fn free(&mut self) {
         unsafe {
             nvd_free_object(self.raw as *mut c_void);
         }
+    }
+    
+}
+
+impl Drop for QuestionDialog {
+    fn drop(&mut self) {
+        self.free();
     }
 }

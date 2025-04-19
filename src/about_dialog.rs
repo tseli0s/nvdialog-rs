@@ -22,9 +22,11 @@
  * IN THE SOFTWARE.
  */
 
+use std::os::raw::c_void;
+
 use nvdialog_sys::ffi::*;
 
-use crate::{cstr, Image};
+use crate::{cstr, Image, Object};
 
 /// A struct for a dialog to show about your application.
 /// 
@@ -104,10 +106,31 @@ impl AboutDialog {
         self.raw = dialog;
         self
     }
+}
 
-    pub fn show(&mut self) {
+impl Object for AboutDialog {
+    type NativeType = NvdAboutDialog;
+    type ReturnValue = ();
+
+    fn get_raw(&self) -> *mut Self::NativeType {
+        self.raw
+    }
+
+    fn show(&self) {
         unsafe {
             nvd_show_about_dialog(self.raw)
         }
+    }
+
+    fn free(&mut self) {
+        unsafe {
+            nvd_free_object(self.raw as *mut c_void)
+        }
+    }
+}
+
+impl Drop for AboutDialog {
+    fn drop(&mut self) {
+        self.free();
     }
 }

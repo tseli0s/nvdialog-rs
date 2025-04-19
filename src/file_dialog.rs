@@ -22,12 +22,10 @@
  * IN THE SOFTWARE.
  */
 
-use crate::cstr;
+use crate::{cstr, Object};
 use nvdialog_sys::ffi::*;
 use std::{
-    ffi::{c_char, CStr},
-    path::PathBuf,
-    ptr::null_mut,
+    ffi::{c_char, CStr}, os::raw::c_void, path::PathBuf, ptr::null_mut
 };
 
 /// Mode of the file dialog
@@ -210,7 +208,7 @@ impl FileDialog {
     ///     eprintln!("No file was selected")
     /// }
     /// ```
-    pub fn retrieve_filename(&mut self) -> Option<PathBuf> {
+    pub fn retrieve_filename(&self) -> Option<PathBuf> {
         let raw_buffer: *mut c_char = null_mut();
         unsafe {
             nvd_get_file_location(self.raw, &raw_buffer as *const _ as *mut _);
@@ -222,5 +220,30 @@ impl FileDialog {
         Some(PathBuf::from(
             filename.to_str().expect("Invalid UTF-8 data"),
         ))
+    }
+}
+
+impl Object for FileDialog {
+    type NativeType = NvdFileDialog;
+    type ReturnValue = Option<PathBuf>;
+
+    fn get_raw(&self) -> *mut Self::NativeType {
+        self.raw
+    }
+
+    fn show(&self) -> Option<PathBuf> {
+        self.retrieve_filename()
+    }
+
+    fn free(&mut self) {
+        unsafe {
+            nvd_free_object(self.raw as *mut c_void);
+        }
+    }
+}
+
+impl Drop for FileDialog {
+    fn drop(&mut self) {
+        self.free();
     }
 }

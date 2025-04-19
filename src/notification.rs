@@ -22,7 +22,7 @@
  * IN THE SOFTWARE.
  */
 
-use crate::cstr;
+use crate::{cstr, Object};
 use nvdialog_sys::ffi::*;
 
 /// A notification dialog, which can be used to send a notification to the user
@@ -129,13 +129,30 @@ impl Notification {
     ///
     /// # FFI
     /// Corresponds to `nvd_send_notification`.
-    pub fn send(&mut self) {
+    pub fn send(&self) {
         unsafe { nvd_send_notification(self.raw) }
+    }
+}
+
+impl Object for Notification {
+    type NativeType = NvdNotification;
+    type ReturnValue = ();
+
+    fn get_raw(&self) -> *mut Self::NativeType {
+        self.raw
+    }
+
+    fn show(&self) {
+        self.send();
+    }
+
+    fn free(&mut self) {
+        unsafe { nvd_delete_notification(self.raw) };
     }
 }
 
 impl Drop for Notification {
     fn drop(&mut self) {
-        unsafe { nvd_delete_notification(self.raw) };
+        self.free();
     }
 }

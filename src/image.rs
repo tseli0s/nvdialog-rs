@@ -31,7 +31,7 @@ use crate::cstr;
 /// A simple image loaded from NvDialog. This is the equivalent to `NvdImage`, although the implementation
 /// makes a few extra safety checks from the Rust side.
 pub struct Image {
-    raw: *mut NvdImage,
+    pub raw: *mut NvdImage,
     path: Option<PathBuf>,
 }
 
@@ -144,7 +144,7 @@ impl Image {
 impl Drop for Image {
     fn drop(&mut self) {
         unsafe {
-            nvd_destroy_image(self.raw);
+            nvd_destroy_image(self.raw)
         }
     }
 }

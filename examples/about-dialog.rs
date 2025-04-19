@@ -1,10 +1,10 @@
 use std::process::abort;
-use nvdialog_rs::{AboutDialog, FileDialog, FileDialogType, Image};
+use nvdialog_rs::{AboutDialog, FileDialog, FileDialogType, Image, Object};
 
 fn main() {
     nvdialog_rs::init().expect("failed to initialize libnvdialog");
     let extensions = [ "png", "jpeg", "jpg", "ico", "webp" ];
-    let mut filedlg = FileDialog::new("Choose the icon for the dialog", FileDialogType::OpenFile, Some(extensions));
+    let filedlg = FileDialog::new("Choose the icon for the dialog", FileDialogType::OpenFile, Some(extensions));
     let filename = filedlg.retrieve_filename().unwrap_or_else(||{
         eprintln!("No filename given!");
         abort()
@@ -14,7 +14,7 @@ fn main() {
         abort();
     });
 
-    let mut dialog = AboutDialog::new()
+    let dialog = AboutDialog::new()
         .name("NvDialog Example")
         .description("An example of using nvdialog-rs and NvdAboutDialog, with a custom user-picked icon")
         .icon(img)
