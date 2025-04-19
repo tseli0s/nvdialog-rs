@@ -23,7 +23,6 @@
  */
 
 use std::os::raw::c_void;
-
 use nvdialog_sys::ffi::*;
 
 use crate::{cstr, Image, Object};
