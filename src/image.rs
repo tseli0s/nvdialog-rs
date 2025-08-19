@@ -22,8 +22,8 @@
  * IN THE SOFTWARE.
  */
 
-use std::path::PathBuf;
 use nvdialog_sys::ffi::*;
+use std::path::PathBuf;
 use thiserror::Error;
 
 use crate::cstr;
@@ -50,8 +50,8 @@ pub enum ImageError {
 impl Image {
     /// Creates an `Image` from a specified filename.
     ///
-    /// This function attempts to load an image from the given file path using 
-    /// NvDialog's image loading facilities. It performs a few checks to ensure 
+    /// This function attempts to load an image from the given file path using
+    /// NvDialog's image loading facilities. It performs a few checks to ensure
     /// robustness and safety from the Rust side.
     ///
     /// # Arguments
@@ -60,7 +60,7 @@ impl Image {
     ///
     /// # Returns
     ///
-    /// * `Result<Self, ImageError>` - Returns an `Ok` variant containing the `Image` 
+    /// * `Result<Self, ImageError>` - Returns an `Ok` variant containing the `Image`
     ///   if successful, or an `ImageError` if an error occurs during the process.
     ///
     /// # Errors
@@ -71,20 +71,26 @@ impl Image {
     ///
     /// # Safety
     ///
-    /// This function makes use of `unsafe` blocks to interface with the C functions 
-    /// from NvDialog. It is assumed that `nvd_image_from_filename` and 
+    /// This function makes use of `unsafe` blocks to interface with the C functions
+    /// from NvDialog. It is assumed that `nvd_image_from_filename` and
     /// `nvd_create_image` are safe to call with the provided arguments.
     pub fn from_filename(filename: PathBuf) -> Result<Self, ImageError> {
-        if !filename.exists() { return Err(ImageError::PathNotFound); }
+        if !filename.exists() {
+            return Err(ImageError::PathNotFound);
+        }
         let mut w = 0;
         let mut h = 0;
-        let data = unsafe { nvd_image_from_filename(cstr!(filename.to_str().unwrap()).as_ptr(), &mut w, &mut h) };
+        let data = unsafe {
+            nvd_image_from_filename(cstr!(filename.to_str().unwrap()).as_ptr(), &mut w, &mut h)
+        };
         let raw = unsafe { nvd_create_image(data, w, h) };
-        if raw.is_null() { return Err(ImageError::UnknownError); }
+        if raw.is_null() {
+            return Err(ImageError::UnknownError);
+        }
 
         Ok(Self {
             raw,
-            path: Some(filename)
+            path: Some(filename),
         })
     }
 
@@ -120,20 +126,19 @@ impl Image {
     /// * `ImageError::UnknownError` - Returned if the image cannot be created from the
     ///   data for some other reason.
     pub unsafe fn from_data(data: &[u8], width: u32, height: u32) -> Result<Self, ImageError> {
-        if data.len() <= 1 { return Err(ImageError::ReadingError) }
+        if data.len() <= 1 {
+            return Err(ImageError::ReadingError);
+        }
         if data.len() % 4 != 0 {
             return Err(ImageError::InvalidFormat);
         }
-        
+
         let raw = nvd_create_image(data.as_ptr(), width as i32, height as i32);
         if raw.is_null() {
             return Err(ImageError::UnknownError);
         }
 
-        Ok(Self {
-            raw,
-            path: None
-        })
+        Ok(Self { raw, path: None })
     }
 
     pub(crate) fn get_raw(&self) -> *mut NvdImage {
@@ -143,8 +148,6 @@ impl Image {
 
 impl Drop for Image {
     fn drop(&mut self) {
-        unsafe {
-            nvd_destroy_image(self.raw)
-        }
+        unsafe { nvd_destroy_image(self.raw) }
     }
 }

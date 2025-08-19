@@ -26,7 +26,6 @@ use crate::{cstr, Object};
 use nvdialog_sys::ffi::*;
 use std::ffi::{c_uint, c_void};
 
-
 /// Represents the buttons that can be displayed on a `QuestionDialog`.
 ///
 ///
@@ -163,11 +162,7 @@ impl QuestionDialog {
         let q = cstr!(msg.as_ref());
         Self {
             raw: unsafe {
-                nvd_dialog_question_new(
-                    t.as_ptr(),
-                    q.as_ptr(),
-                    buttons.clone() as c_uint
-                )
+                nvd_dialog_question_new(t.as_ptr(), q.as_ptr(), buttons.clone() as c_uint)
             },
             title: String::from(title.as_ref()),
             msg: String::from(msg.as_ref()),
@@ -217,17 +212,16 @@ impl Object for QuestionDialog {
     fn get_raw(&self) -> *mut NvdQuestionBox {
         self.raw
     }
-    
+
     fn show(&self) -> Reply {
         self.get_reply()
     }
-    
+
     fn free(&mut self) {
         unsafe {
             nvd_free_object(self.raw as *mut c_void);
         }
     }
-    
 }
 
 impl Drop for QuestionDialog {

@@ -27,8 +27,7 @@
 #[macro_export]
 macro_rules! cstr {
     ($rstr:expr) => {
-        std::ffi::CString::new($rstr)
-            .expect("CString::new error")
+        std::ffi::CString::new($rstr).expect("CString::new error")
     };
 }
 

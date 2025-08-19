@@ -22,28 +22,28 @@
  * IN THE SOFTWARE.
  */
 
-use std::os::raw::c_void;
 use nvdialog_sys::ffi::*;
+use std::os::raw::c_void;
 
 use crate::{cstr, Image, Object};
 
 /// A struct for a dialog to show about your application.
-/// 
+///
 /// Dialogs like this are used in the traditional Help > About dialogs found in most programs.
 /// In this case, this `AboutDialog` uses, like the rest of the library, the OS' native toolkit to show
 /// it. This may create inconsistency in some situations, for example in web apps.
-/// 
+///
 /// # Examples
 /// Basic about dialog:
 /// ```rust
 /// use nvdialog_rs::AboutDialog;
-/// 
+///
 /// let dialog = AboutDialog::new()
 ///                 .name("App Name".into())
 ///                 .description("A short description for your app".into())
 ///                 .version("0.1.0")
 ///                 .build();
-/// 
+///
 /// dialog.show()
 /// ```
 pub struct AboutDialog {
@@ -51,7 +51,7 @@ pub struct AboutDialog {
     details: String,
     version: String,
     icon: Option<Image>,
-    raw: *mut NvdAboutDialog
+    raw: *mut NvdAboutDialog,
 }
 
 impl AboutDialog {
@@ -90,18 +90,14 @@ impl AboutDialog {
             let n = cstr!(&*self.app_name);
             let d = cstr!(&*self.details);
             let v = cstr!(&*self.version);
-            let raw = nvd_about_dialog_new(
-                n.as_ptr(),
-                d.as_ptr(),
-                std::ptr::null_mut()
-            );
+            let raw = nvd_about_dialog_new(n.as_ptr(), d.as_ptr(), std::ptr::null_mut());
             nvd_about_dialog_set_version(raw, v.as_ptr());
             if let Some(ref i) = self.icon {
                 nvd_dialog_set_icon(raw, i.get_raw())
             }
             raw
         };
-        
+
         self.raw = dialog;
         self
     }
@@ -116,15 +112,11 @@ impl Object for AboutDialog {
     }
 
     fn show(&self) {
-        unsafe {
-            nvd_show_about_dialog(self.raw)
-        }
+        unsafe { nvd_show_about_dialog(self.raw) }
     }
 
     fn free(&mut self) {
-        unsafe {
-            nvd_free_object(self.raw as *mut c_void)
-        }
+        unsafe { nvd_free_object(self.raw as *mut c_void) }
     }
 }
 

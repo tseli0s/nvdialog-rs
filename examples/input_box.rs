@@ -22,22 +22,25 @@
  * IN THE SOFTWARE.
  */
 
-use nvdialog_rs::{FileDialog, FileDialogType};
+use std::process::abort;
+
+use nvdialog_rs::InputBox;
 
 fn main() {
-    nvdialog_rs::init().expect("failed to initialize nvdialog");
-    let folder_dialog = FileDialog::new(
-        "Choose a folder",
-        FileDialogType::OpenFolder,
-        None::<Vec<&str>>,
+    nvdialog_rs::init().unwrap_or_else(|e| {
+        eprintln!("Failed to initialize NvDialog: {}", e.to_string());
+        abort();
+    });
+
+    let mut input_box = InputBox::new(
+        "Input Box",
+        "Please enter some text here. The text will be printed to stdout.",
     );
-    let where_to_save = FileDialog::new("Save as...", FileDialogType::SaveFile, None::<Vec<&str>>);
-
-    if let Some(p) = folder_dialog.retrieve_filename() {
-        println!("You chose folder {}", p.display());
-    }
-
-    if let Some(s) = where_to_save.retrieve_filename() {
-        println!("Saved as {}", s.display());
+    input_box.display();
+    let input = input_box.get_input();
+    if let Some(string) = input {
+        println!("You entered the following text: \"{}\"", string.to_string());
+    } else {
+        eprintln!("You didn't enter anything!");
     }
 }

@@ -40,7 +40,7 @@ pub struct Notification {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-/// [`NotificationKind`] defines a type that can represent different kinds of notifications. 
+/// [`NotificationKind`] defines a type that can represent different kinds of notifications.
 /// The enum has three variants:
 /// `Simple`, `Warning`, and `Error`, each representing a different kind of notification.
 pub enum NotificationKind {
@@ -99,9 +99,9 @@ impl Notification {
 
     /// The `add_action` function in Rust adds a notification action with a specified name, value, and
     /// pointer.
-    /// 
+    ///
     /// Arguments:
-    /// 
+    ///
     /// * [`name`]: A string that that represents the name of an action to be added.
     /// * [`val`]: The value to save in the address pointed to by [`ptr`]
     /// * [`ptr`]: A pointer to the variable to save the response to

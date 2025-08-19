@@ -25,11 +25,14 @@
 use crate::{cstr, Object};
 use nvdialog_sys::ffi::*;
 use std::{
-    ffi::{c_char, CStr}, os::raw::c_void, path::PathBuf, ptr::null_mut
+    ffi::{c_char, CStr},
+    os::raw::c_void,
+    path::PathBuf,
+    ptr::null_mut,
 };
 
 /// Mode of the file dialog
-/// 
+///
 /// A file dialog may either be used for getting a file (`OpenFile`), getting a directory (`OpenFolder`) or
 /// saving a file (`SaveFile`). When creating a new file dialog, you must set
 /// its mode by one of the enums below.
@@ -136,37 +139,31 @@ impl FileDialog {
             FileDialogType::OpenFile => {
                 let t = cstr!(title.as_ref());
                 Self {
-                raw: unsafe {
-                    nvd_open_file_dialog_new(
-                        t.as_ptr(),
-                        if extensions.is_empty() {
-                            null_mut()
-                        } else {
-                            extensions.as_ptr() as *const c_char
-                        },
-                    )
-                },
-                location_chosen: None,
-            }},
-            FileDialogType::SaveFile => {
-                let t = cstr!(title.as_ref());
-                let f = cstr!("filename");
-                Self {
                     raw: unsafe {
-                        nvd_save_file_dialog_new(
+                        nvd_open_file_dialog_new(
                             t.as_ptr(),
-                            f.as_ptr()
+                            if extensions.is_empty() {
+                                null_mut()
+                            } else {
+                                extensions.as_ptr() as *const c_char
+                            },
                         )
                     },
                     location_chosen: None,
                 }
-            },
+            }
+            FileDialogType::SaveFile => {
+                let t = cstr!(title.as_ref());
+                let f = cstr!("filename");
+                Self {
+                    raw: unsafe { nvd_save_file_dialog_new(t.as_ptr(), f.as_ptr()) },
+                    location_chosen: None,
+                }
+            }
             FileDialogType::OpenFolder => {
                 let t = cstr!(title.as_ref());
                 Self {
-                    raw: unsafe {
-                        nvd_open_folder_dialog_new(t.as_ptr(), null_mut())
-                    },
+                    raw: unsafe { nvd_open_folder_dialog_new(t.as_ptr(), null_mut()) },
                     location_chosen: None,
                 }
             }
@@ -209,17 +206,15 @@ impl FileDialog {
     /// }
     /// ```
     pub fn retrieve_filename(&self) -> Option<PathBuf> {
-        let raw_buffer: *mut c_char = null_mut();
-        unsafe {
-            nvd_get_file_location(self.raw, &raw_buffer as *const _ as *mut _);
+        let str = unsafe { nvd_get_file_location(self.raw) };
+        if str.is_null() {
+            None
+        } else {
+            let filename = unsafe { CStr::from_ptr(nvd_string_to_cstr(str)) };
+            Some(PathBuf::from(
+                filename.to_str().expect("Invalid UTF-8 data"),
+            ))
         }
-        if raw_buffer.is_null() {
-            return None;
-        }
-        let filename = unsafe { CStr::from_ptr(raw_buffer) };
-        Some(PathBuf::from(
-            filename.to_str().expect("Invalid UTF-8 data"),
-        ))
     }
 }
 

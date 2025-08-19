@@ -126,11 +126,15 @@ impl Object for DialogBox {
     }
 
     fn show(&self) {
-        unsafe { nvd_show_dialog(self.raw); }
+        unsafe {
+            nvd_show_dialog(self.raw);
+        }
     }
 
     fn free(&mut self) {
-        unsafe { nvd_free_object(self.raw as *mut c_void); }
+        unsafe {
+            nvd_free_object(self.raw as *mut c_void);
+        }
     }
 }
 

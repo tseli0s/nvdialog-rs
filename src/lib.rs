@@ -30,7 +30,7 @@
 //! The crate strives to replicate Rust’s compile-time safety checks within the context of NvDialog to ensure the integrity of your code.
 //! For instance, we use mutable references where necessary in FFI calls that modify data, avoiding plain references
 //! which aren't checked by Rust's borrow checker.
-//! 
+//!
 //! # Threading Considerations
 //! NvDialog’s threading rules remain the same, regardless of the language. Dialogs should always be created and used on the same thread.
 //! While it's technically possible to create dialogs from secondary threads, it is not officially supported and can lead
@@ -39,8 +39,7 @@
 //! - **Windows**: Creating dialogs from secondary threads may work in a lot of cases, but it is considered unsafe and not recommended.
 //! - **macOS**: UI operations, including dialogs, must be performed on the main thread. Creating dialogs from other threads is not supported.
 //! - **Gtk3/4 (GNU/Linux)**: While Gtk does not directly support cross-thread UI operations, GLib provides mechanisms to safely send data between threads. However `nvdialog-rs` does not make use of them, meaning sending and receiving data across threads is still unsupported.
- 
- 
+
 //! # Example dialog:
 //! ```rust
 //! use nvdialog_rs::DialogBox;
@@ -71,20 +70,24 @@ mod dialog_box;
 mod error;
 mod file_dialog;
 mod image;
+mod input_box;
 mod notification;
-mod question_dialog;
-mod util;
 mod object;
+mod question_dialog;
+mod string;
+mod util;
 
 pub use about_dialog::*;
 pub use dialog_box::*;
 pub use error::*;
 pub use file_dialog::*;
 pub use image::*;
+pub use input_box::*;
 pub use notification::*;
 use nvdialog_sys::ffi::nvd_init;
-pub use question_dialog::*;
 pub use object::*;
+pub use question_dialog::*;
+pub use string::*;
 
 /// Initialize NvDialog in the current thread.
 ///
