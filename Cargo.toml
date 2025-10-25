@@ -3,7 +3,7 @@ members = [ "nvdialog-sys" ]
 
 [package]
 name    = "nvdialog-rs"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 repository  = "https://github.com/tseli0s/nvdialog-rs.git"
 description = "High-level Rust bindings for NvDialog"
