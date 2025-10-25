@@ -22,7 +22,7 @@ fn main() {
         .build_target("nvdialog")
         .define("NVD_BUILD_STATIC", "ON")
         .define("NVDIALOG_MAXBUF", "256")
-        .define("NVD_USE_GTK4", "OFF")
+        .define("CROSS_COMPILE_FOR_WIN32", "OFF")
         .define(
             "CMAKE_BUILD_TYPE",
             if cfg!(debug_assertions) {
